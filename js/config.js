@@ -124,7 +124,7 @@ const CONFIG = {
 
     // 天气 API 配置
     weather: {
-        apiKey: '384bcd9d290047a58b50968af59704ad',
+        apiKey: 'a2aa5892214140fb82303f5da47caa3c',
         apiUrl: 'https://api.qweather.com/v7/weather/now',
         geoUrl: 'https://api.qweather.com/v2/city/lookup'
     }
