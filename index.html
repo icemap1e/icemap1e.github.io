@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>导航页</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部区域 -->
+        <div class="top-section">
+            <!-- 状态栏 -->
+            <div class="status-bar">
+                <div class="info-container">
+                    <!-- 时间组件 -->
+                    <div class="time-section">
+                        <div class="time-main">
+                            <div class="time">12:34</div>
+                            <div class="date">2024年1月26日</div>
+                        </div>
+                        <div class="calendar-info">
+                            <div class="lunar-date">农历腊月十六</div>
+                            <div class="countdown-info">
+                                <div class="year-progress">
+                                    <i class="ri-calendar-line"></i>
+                                    <span>2024年已过 26.7%</span>
+                                </div>
+                                <div class="countdown">
+                                    <i class="ri-calendar-event-line"></i>
+                                    <span>春节还有 15 天</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 天气组件 -->
+                    <div class="weather-info">
+                        <div class="weather-icon ri-sun-line"></div>
+                        <div class="weather-text-group">
+                            <div class="weather-temperature">26°C</div>
+                            <div class="weather-location">
+                                <i class="ri-map-pin-line"></i>
+                                <span>北京市</span>
+                            </div>
+                            <div class="weather-details">
+                                <div class="weather-item">
+                                    <i class="ri-drop-line"></i>
+                                    <span>湿度 65%</span>
+                                </div>
+                                <div class="weather-item">
+                                    <i class="ri-wind-line"></i>
+                                    <span>东南风 3级</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 工作状态组件 -->
+                    <div class="work-status">
+                        <div class="work-time">
+                            <i class="ri-time-line"></i>
+                            <div class="work-text-group">
+                                <div class="work-schedule">工作时间</div>
+                                <div class="work-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress" style="width: 75%"></div>
+                                    </div>
+                                    <div class="status-text">距离下班还有 2 小时</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 搜索区域 -->
+            <div class="search-container">
+                <div class="search-box">
+                    <div class="search-input-wrapper">
+                        <input type="text" id="searchInput" placeholder="搜索">
+                        <div id="suggestionBox" class="suggestion-box"></div>
+                    </div>
+                    <div class="search-actions">
+                        <div class="search-right">
+                            <div class="search-engines">
+                                <div class="engine-label">切换搜索引擎：</div>
+                                <div class="engine-option active" data-engine="baidu">百度</div>
+                                <div class="engine-option" data-engine="google">Google</div>
+                                <div class="engine-option" data-engine="bing">Bing</div>
+                                <div class="engine-option" data-engine="yandex">Yandex</div>
+                                <div class="engine-option" data-engine="yahoo">Yahoo</div>
+                                <div class="engine-option" data-engine="sogou">搜狗</div>
+                                <div class="engine-option" data-engine="search360">360</div>
+                                <div class="engine-option" data-engine="github">Github</div>
+                            </div>
+                            <button id="searchBtn">
+                                <i class="ri-search-line"></i>
+                                搜索
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 书签区域 -->
+        <div class="bookmarks-container">
+            <div class="bookmarks-header">
+                <div class="bookmarks-title">
+                    <i class="ri-bookmark-line"></i>
+                    <span>快捷方式</span>
+                </div>
+            </div>
+            <div class="bookmarks-grid">
+                <!-- 书签项将通过 JavaScript 动态添加 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 主题切换按钮 -->
+    <div class="theme-toggle">
+        <i id="themeIcon" class="ri-sun-line"></i>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html> 
