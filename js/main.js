@@ -55,6 +55,266 @@ const festivals = [
     { name: '国庆节', month: 9, day: 1, year: 2024 },  // 2024年10月1日
 ];
 
+// 备忘录功能
+class MemoManager {
+    constructor() {
+        this.memos = JSON.parse(localStorage.getItem('memos')) || [];
+        this.initElements();
+        this.bindEvents();
+        this.autoSaveTimeout = null;
+        this.updatePreview(); // 初始化时更新预览
+    }
+
+    initElements() {
+        // 按钮和窗口元素
+        this.memoContainer = document.querySelector('.memo-container');
+        this.memoEditWindow = document.querySelector('.memo-edit-window');
+        this.modalOverlay = document.querySelector('.modal-overlay');
+        this.editTextArea = document.querySelector('.memo-edit-text');
+        this.closeEditBtn = document.querySelector('.close-edit');
+        this.previewContent = document.querySelector('.memo-preview-content');
+    }
+
+    bindEvents() {
+        // 点击整个容器打开备忘录窗口
+        this.memoContainer.addEventListener('click', () => this.showEditWindow());
+
+        // 关闭编辑窗口
+        this.closeEditBtn.addEventListener('click', () => this.hideEditWindow());
+
+        // 点击遮罩层关闭窗口
+        this.modalOverlay.addEventListener('click', () => this.hideEditWindow());
+
+        // 处理输入变化，实现自动保存
+        this.editTextArea.addEventListener('input', (e) => {
+            clearTimeout(this.autoSaveTimeout);
+            this.autoSaveTimeout = setTimeout(() => {
+                const content = this.editTextArea.innerHTML.trim();
+                if (content) {
+                    // 更新或创建备忘录
+                    if (this.memos.length > 0) {
+                        this.memos[0] = {
+                            ...this.memos[0],
+                            content: content,
+                            updatedAt: new Date().toISOString()
+                        };
+                    } else {
+                        this.memos.push({
+                            id: Date.now().toString(),
+                            content: content,
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString()
+                        });
+                    }
+                    this.saveToLocalStorage();
+                    this.updatePreview(); // 保存时更新预览
+                }
+            }, 500);
+
+            // 确保内容始终在 p 标签内
+            const selection = window.getSelection();
+            const range = selection.getRangeAt(0);
+            const currentNode = range.startContainer;
+
+            // 如果当前节点不在 p 标签内，创建新的 p 标签
+            if (!currentNode.parentElement.matches('p')) {
+                const p = document.createElement('p');
+                // 如果是文本节点，将其包装在 p 标签中
+                if (currentNode.nodeType === Node.TEXT_NODE) {
+                    const textContent = currentNode.textContent;
+                    currentNode.textContent = '';
+                    p.textContent = textContent;
+                    this.editTextArea.insertBefore(p, currentNode);
+                    currentNode.remove();
+                } else {
+                    // 如果是其他类型的节点，创建新的空 p 标签
+                    this.editTextArea.appendChild(p);
+                }
+            }
+
+            this.updateNumbers();
+        });
+
+        // 处理回车键
+        this.editTextArea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const selection = window.getSelection();
+                const range = selection.getRangeAt(0);
+                const currentP = range.startContainer.parentElement.closest('p');
+                
+                if (!currentP) return;
+
+                // 创建新段落
+                const newP = document.createElement('p');
+                newP.innerHTML = '<br>';  // 添加一个换行符，防止空段落折叠
+
+                // 如果在段落中间按回车，需要处理分割内容
+                if (range.startOffset < currentP.textContent.length) {
+                    const textAfterCursor = currentP.textContent.substring(range.startOffset);
+                    currentP.textContent = currentP.textContent.substring(0, range.startOffset);
+                    newP.textContent = textAfterCursor;
+                }
+
+                // 插入新段落
+                if (currentP.nextSibling) {
+                    this.editTextArea.insertBefore(newP, currentP.nextSibling);
+                } else {
+                    this.editTextArea.appendChild(newP);
+                }
+
+                // 设置光标位置到新段落的开始
+                range.setStart(newP, 0);
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+
+                this.updateNumbers();
+            }
+        });
+
+        // 处理删除键
+        this.editTextArea.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !e.shiftKey) {
+                const selection = window.getSelection();
+                const range = selection.getRangeAt(0);
+                const currentP = range.startContainer.parentElement.closest('p');
+                
+                if (!currentP) return;
+                
+                // 如果光标在段落开始处并且不是第一个段落
+                if (range.startOffset === 0 && currentP.previousSibling) {
+                    e.preventDefault();
+                    const prevP = currentP.previousSibling;
+                    const prevLength = prevP.textContent.length;
+                    
+                    // 将当前段落的内容追加到上一个段落
+                    prevP.textContent += currentP.textContent;
+                    currentP.remove();
+                    
+                    // 设置光标位置
+                    const newRange = document.createRange();
+                    newRange.setStart(prevP.firstChild || prevP, prevLength);
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+                    
+                    this.updateNumbers();
+                }
+            }
+        });
+
+        // 处理粘贴事件
+        this.editTextArea.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const text = e.clipboardData.getData('text/plain');
+            const lines = text.split('\n');
+            const selection = window.getSelection();
+            const range = selection.getRangeAt(0);
+            const currentP = range.startContainer.parentElement.closest('p');
+            
+            if (!currentP) return;
+            
+            // 处理第一行
+            const firstLine = lines[0];
+            const textBeforeCursor = currentP.textContent.substring(0, range.startOffset);
+            const textAfterCursor = currentP.textContent.substring(range.startOffset);
+            currentP.textContent = textBeforeCursor + firstLine;
+            
+            // 处理剩余行
+            for (let i = 1; i < lines.length; i++) {
+                const newP = document.createElement('p');
+                newP.textContent = lines[i];
+                if (currentP.nextSibling) {
+                    this.editTextArea.insertBefore(newP, currentP.nextSibling);
+                } else {
+                    this.editTextArea.appendChild(newP);
+                }
+            }
+            
+            // 处理最后一行
+            if (lines.length > 1) {
+                const lastP = this.editTextArea.lastChild;
+                lastP.textContent += textAfterCursor;
+            } else {
+                currentP.textContent += textAfterCursor;
+            }
+            
+            this.updateNumbers();
+        });
+
+        // 处理初始点击事件
+        this.editTextArea.addEventListener('click', () => {
+            const firstP = this.editTextArea.querySelector('p');
+            if (firstP && !firstP.textContent.trim()) {
+                firstP.textContent = '';
+            }
+        });
+    }
+
+    showEditWindow() {
+        // 获取现有内容
+        const content = this.memos[0]?.content || '<p></p>';
+        this.editTextArea.innerHTML = content;
+        this.updateNumbers();
+        this.memoEditWindow.style.display = 'flex';
+        this.modalOverlay.style.display = 'block';
+        this.editTextArea.focus();
+
+        // 设置光标位置到第一个段落的开始
+        const firstP = this.editTextArea.querySelector('p');
+        if (firstP) {
+            const range = document.createRange();
+            const sel = window.getSelection();
+            range.setStart(firstP, 0);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    }
+
+    hideEditWindow() {
+        // 直接隐藏窗口，不需要额外的保存操作
+        this.memoEditWindow.style.display = 'none';
+        this.modalOverlay.style.display = 'none';
+    }
+
+    updateNumbers() {
+        const paragraphs = Array.from(this.editTextArea.children);
+        paragraphs.forEach((p, index) => {
+            if (p.tagName.toLowerCase() === 'p') {
+                p.setAttribute('data-number', (index + 1).toString());
+            }
+        });
+    }
+
+    saveToLocalStorage() {
+        localStorage.setItem('memos', JSON.stringify(this.memos));
+    }
+
+    updatePreview() {
+        if (this.memos.length > 0) {
+            // 将内容按段落分割并添加到预览区域
+            const content = this.memos[0].content;
+            const paragraphs = content.split('</p>');
+            const formattedContent = paragraphs
+                .map((p, index) => {
+                    // 提取纯文本内容
+                    const text = p.replace(/<[^>]+>/g, '').trim();
+                    return text ? `<p data-number="${index + 1}">${text}</p>` : '';
+                })
+                .filter(p => p) // 移除空段落
+                .join('');
+            
+            this.previewContent.innerHTML = formattedContent;
+        } else {
+            this.previewContent.innerHTML = '';
+        }
+    }
+}
+
+// 初始化备忘录管理器
+const memoManager = new MemoManager();
+
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
@@ -363,62 +623,63 @@ function initPingTest() {
     bookmarkItems.forEach(item => {
         const url = item.dataset.url;
         if (url) {
-            addPingIndicator(item);
-            measurePing(item, url);
+            measurePing(url, item);
         }
     });
 }
 
-function addPingIndicator(item) {
+function measurePing(url, item) {
+    // 先移除已存在的延时指示器
+    const existingIndicator = item.querySelector('.ping-indicator');
+    if (existingIndicator) {
+        existingIndicator.remove();
+    }
+
+    // 创建新的延时指示器
     const indicator = document.createElement('div');
     indicator.className = 'ping-indicator ping-updating';
     indicator.textContent = '测速中';
     item.appendChild(indicator);
-}
-
-function measurePing(item, url) {
-    const indicator = item.querySelector('.ping-indicator');
-    if (!indicator) return;
 
     const startTime = performance.now();
-    const favicon = new Image();
-    
-    favicon.onload = () => {
-        updatePingStatus(item, indicator, performance.now() - startTime);
-        indicator.classList.add('active');
-    };
-    favicon.onerror = () => {
-        updatePingStatus(item, indicator, -1);
-        indicator.classList.add('active');
-    };
-    
-    try {
-        const faviconUrl = new URL('/favicon.ico', url).href;
-        favicon.src = faviconUrl + '?t=' + Date.now();
-    } catch (error) {
-        updatePingStatus(item, indicator, -1);
-        indicator.classList.add('active');
-    }
+
+    // 首先尝试HEAD请求
+    fetch(url, { 
+        method: 'HEAD',
+        mode: 'no-cors'
+    })
+    .then(() => {
+        const endTime = performance.now();
+        const pingTime = Math.round(endTime - startTime);
+        updatePingStatus(indicator, pingTime);
+    })
+    .catch(() => {
+        // 如果HEAD请求失败，尝试GET请求
+        fetch(url, { 
+            mode: 'no-cors' 
+        })
+        .then(() => {
+            const endTime = performance.now();
+            const pingTime = Math.round(endTime - startTime);
+            updatePingStatus(indicator, pingTime);
+        })
+        .catch(() => {
+            indicator.className = 'ping-indicator ping-slow';
+            indicator.textContent = '超时';
+        });
+    });
 }
 
-function updatePingStatus(item, indicator, pingTime) {
+function updatePingStatus(indicator, pingTime) {
+    indicator.textContent = pingTime + 'ms';
     indicator.classList.remove('ping-updating');
     
-    if (pingTime === -1) {
-        indicator.textContent = '超时';
-        indicator.className = 'ping-indicator ping-slow active';
-        return;
-    }
-    
-    const ping = Math.round(pingTime);
-    indicator.textContent = ping + 'ms';
-    
-    if (ping < 100) {
-        indicator.className = 'ping-indicator ping-fast active';
-    } else if (ping < 300) {
-        indicator.className = 'ping-indicator ping-medium active';
+    if (pingTime < 500) {
+        indicator.classList.add('ping-fast');
+    } else if (pingTime < 1000) {
+        indicator.classList.add('ping-medium');
     } else {
-        indicator.className = 'ping-indicator ping-slow active';
+        indicator.classList.add('ping-slow');
     }
 }
 
@@ -663,13 +924,11 @@ function loadBookmarks() {
         
         const bookmarkItem = document.createElement('div');
         bookmarkItem.className = 'bookmark-item';
+        bookmarkItem.dataset.url = bookmark.url;  // 添加 URL 数据属性
         bookmarkItem.innerHTML = `
             <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" class="bookmark-icon" alt="${bookmark.title} icon" 
                  onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><text y=\'.9em\' font-size=\'90\'>🌐</text></svg>';">
             <span class="bookmark-title">${bookmark.title}</span>
-            <div class="ping-indicator">
-                <span class="ping-time"></span>
-            </div>
         `;
 
         bookmarkItem.addEventListener('click', () => {
@@ -680,7 +939,7 @@ function loadBookmarks() {
 
         // 添加延迟以避免同时发送太多请求
         setTimeout(() => {
-            measurePing(bookmark.url, index);
+            initPingTest();
         }, Math.random() * 2000); // 随机延迟 0-2 秒
     });
 }
