@@ -642,7 +642,7 @@ body {
 /* 搜索容器样式 */
 .search-container {
     margin-top: 2rem;
-    margin-bottom: 6rem;
+    margin-bottom: 10rem;
     transition: var(--transition);
     padding: 0;
     width: 100%;
