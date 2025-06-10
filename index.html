@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人导航</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="status-bar">
+        <div class="status-container">
+            <div class="status-item">
+                <i class="fa-regular fa-clock"></i>
+                <span id="current-time">00:00:00</span>
+            </div>
+            <div class="status-item">
+                <i class="fa-regular fa-calendar-days"></i>
+                <span id="current-date">2024-01-01</span>
+                <span id="current-weekday" class="weekday">星期一</span>
+            </div>
+            <div id="weather">
+                <i class="fa-solid fa-cloud-sun-rain"></i>
+                <span>加载中...</span>
+            </div>
+            <div class="status-item" id="network-status">
+                <i class="fas fa-wifi"></i>
+                <span>网络状态: 检测中...</span>
+            </div>
+        </div>
+        <div class="status-right">
+            <div class="status-item work-progress">
+                <div class="progress-container">
+                    <div class="progress-text">
+                        <span id="work-countdown">工作倒计时: --:--</span>
+                        <span id="work-progress-text">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="work-progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+            <button id="theme-toggle" title="切换主题">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </div>
+    <div class="container">
+        <header>
+            <h1>欢迎回来，今天也要元气满满哦！</h1>
+            <div class="search-box">
+                <div class="search-container">
+                    <div class="search-engine-selector">
+                        <button class="engine-btn active" data-engine="google" onclick="setSearchEngine('google')">
+                            <i class="fab fa-google"></i>
+                        </button>
+                        <button class="engine-btn" data-engine="bing" onclick="setSearchEngine('bing')">
+                            <i class="fab fa-microsoft"></i>
+                        </button>
+                        <button class="engine-btn" data-engine="baidu" onclick="setSearchEngine('baidu')">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="search-input-wrapper">
+                        <input type="text" id="search" placeholder="使用 Google 搜索..." autocomplete="off">
+                        <button onclick="search()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <div id="search-suggestions" class="search-suggestions"></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="links-grid">
+                <!-- 快捷方式将通过 JavaScript 动态生成 -->
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2024 - 2025 你想堆个雪人吗 | 使用  Cursor, HTML5, CSS3, JavaScript 构建 | 最后更新: 2025-06-10</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
