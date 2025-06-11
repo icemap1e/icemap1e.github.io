@@ -163,31 +163,24 @@ body {
     background: var(--border);
 }
 
-.work-progress span:first-child {
+.work-progress span {
     font-weight: 500;
     color: var(--text-primary);
     transition: color var(--transition-fast) ease;
 }
 
-.work-progress span:last-child {
-    font-weight: 400;
-    font-size: 12px;
-    color: var(--text-secondary);
-    transition: color var(--transition-fast) ease;
-}
-
 /* 状态颜色 */
-.work-progress[data-state="等待上班"] span:first-child {
+.work-progress[data-state="等待上班"] span {
     color: var(--warning);
 }
 
-.work-progress[data-state="工作结束"] span:first-child {
+.work-progress[data-state="工作结束"] span {
     color: var(--success);
 }
 
-.work-progress[data-state="上午工作"] span:first-child,
-.work-progress[data-state="下午工作"] span:first-child,
-.work-progress[data-state="午休中"] span:first-child {
+.work-progress[data-state="上午工作"] span,
+.work-progress[data-state="下午工作"] span,
+.work-progress[data-state="午休中"] span {
     color: var(--primary);
 }
 
@@ -196,12 +189,8 @@ body {
     background: var(--border);
 }
 
-[data-theme="dark"] .work-progress span:first-child {
+[data-theme="dark"] .work-progress span {
     color: var(--text-primary);
-}
-
-[data-theme="dark"] .work-progress span:last-child {
-    color: var(--text-secondary);
 }
 
 /* 移动端适配 */
@@ -228,7 +217,7 @@ body {
         height: 14px;
     }
 
-    .work-progress span:last-child {
+    .work-progress span {
         font-size: 11px;
     }
 
@@ -370,16 +359,19 @@ body {
     margin-left: 16px;
     position: relative;
     z-index: 1;
+    will-change: transform, background-color, border-color;
 }
 
 #theme-toggle:hover {
     background: var(--hover-bg);
     border-color: var(--primary);
-    transform: rotate(15deg);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--shadow-md);
 }
 
 #theme-toggle:active {
-    transform: scale(0.95);
+    transform: translateY(0);
+    box-shadow: 0 2px 6px var(--shadow-sm);
 }
 
 #theme-toggle i {
@@ -390,12 +382,12 @@ body {
 
 /* 暗色主题适配 */
 [data-theme="dark"] #theme-toggle {
-    background: rgba(48, 49, 52, 0.8);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: var(--surface);
+    border-color: var(--border);
 }
 
 [data-theme="dark"] #theme-toggle:hover {
-    background: rgba(60, 61, 64, 0.8);
+    background: var(--hover-bg);
     border-color: var(--primary);
 }
 

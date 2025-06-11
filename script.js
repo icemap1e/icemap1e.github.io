@@ -96,11 +96,10 @@ function updateWorkCountdown() {
     endTime.setHours(17, 0, 0, 0);
 
     const countdownText = document.getElementById('work-countdown');
-    const progressText = document.getElementById('work-progress-text');
     const workProgress = document.querySelector('.work-progress');
 
     // 检查必要的元素是否存在
-    if (!countdownText || !progressText || !workProgress) {
+    if (!countdownText || !workProgress) {
         console.warn('工作倒计时相关元素未找到，跳过更新');
         return;
     }
@@ -111,7 +110,7 @@ function updateWorkCountdown() {
     let currentState = '';
 
     // 计算总工作时间（不包括午休）
-    const totalWorkMinutes = 7 * 60; // 7小时工作制（8小时减去1小时午休）
+    const totalWorkMinutes = 7 * 60;
 
     if (now < startTime) {
         // 工作前
@@ -160,9 +159,6 @@ function updateWorkCountdown() {
         } else {
             countdownText.textContent = status;
         }
-
-        // 更新进度显示
-        progressText.textContent = `${currentState} ${progress}%`;
         
         // 更新状态和进度条
         workProgress.setAttribute('data-state', currentState);
