@@ -1,4 +1,29 @@
-// 状态栏功能
+// 使用防抖函数优化搜索建议
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// 使用节流函数优化滚动事件
+function throttle(func, limit) {
+    let inThrottle;
+    return function executedFunction(...args) {
+        if (!inThrottle) {
+            func(...args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+// 优化状态栏功能
 function updateWelcomeMessage() {
     const now = new Date();
     const hour = now.getHours();
@@ -16,77 +41,135 @@ function updateWelcomeMessage() {
     );
 
     const h1 = document.querySelector('h1');
-    if (currentMessage) {
+    if (currentMessage && h1.textContent !== currentMessage.message) {
         h1.textContent = currentMessage.message;
     }
 }
 
+// 优化日期时间更新
 function updateDateTime() {
     const now = new Date();
     const timeElement = document.getElementById('current-time');
     const dateElement = document.getElementById('current-date');
     const weekdayElement = document.getElementById('current-weekday');
     
-    // 更新时间
-    timeElement.textContent = now.toLocaleTimeString('zh-CN', {
+    const timeString = now.toLocaleTimeString('zh-CN', {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
         hour12: false
     });
     
-    // 更新日期
-    dateElement.textContent = now.toLocaleDateString('zh-CN', {
+    const dateString = now.toLocaleDateString('zh-CN', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit'
     });
 
-    // 更新星期
     const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-    weekdayElement.textContent = weekdays[now.getDay()];
+    const weekdayString = weekdays[now.getDay()];
 
-    // 更新欢迎语
+    // 只在值改变时更新DOM
+    if (timeElement.textContent !== timeString) {
+        timeElement.textContent = timeString;
+    }
+    if (dateElement.textContent !== dateString) {
+        dateElement.textContent = dateString;
+    }
+    if (weekdayElement.textContent !== weekdayString) {
+        weekdayElement.textContent = weekdayString;
+    }
+
     updateWelcomeMessage();
 }
 
+// 优化工作倒计时
 function updateWorkCountdown() {
     const now = new Date();
+    const startTime = new Date();
+    startTime.setHours(8, 0, 0, 0);
+    const lunchStart = new Date();
+    lunchStart.setHours(11, 30, 0, 0);
+    const lunchEnd = new Date();
+    lunchEnd.setHours(13, 30, 0, 0);
     const endTime = new Date();
-    endTime.setHours(18, 0, 0, 0); // 设置下班时间为 18:00
+    endTime.setHours(17, 0, 0, 0);
 
-    if (now > endTime) {
-        document.querySelector('.progress-text').innerHTML = '<span>今日工作已结束</span><span>100%</span>';
-        document.querySelector('.progress-fill').style.width = '100%';
-        return;
+    const countdownText = document.getElementById('work-countdown');
+    const progressText = document.getElementById('work-progress-text');
+    const workProgress = document.querySelector('.work-progress');
+    let status = '';
+    let timeLeft = 0;
+    let progress = 0;
+    let currentState = '';
+
+    // 计算总工作时间（不包括午休）
+    const totalWorkMinutes = 7 * 60; // 7小时工作制（8小时减去1小时午休）
+
+    if (now < startTime) {
+        // 工作前
+        status = '距离上班还有';
+        timeLeft = Math.floor((startTime - now) / 1000);
+        progress = 0;
+        currentState = '等待上班';
+    } else if (now >= endTime) {
+        // 工作后
+        status = '今日工作已结束';
+        timeLeft = 0;
+        progress = 100;
+        currentState = '工作结束';
+    } else if (now >= lunchStart && now < lunchEnd) {
+        // 午休时间
+        status = '午休中，距离工作还有';
+        timeLeft = Math.floor((lunchEnd - now) / 1000);
+        const lunchProgress = Math.min(100, Math.max(0, ((now - lunchStart) / (lunchEnd - lunchStart)) * 100));
+        progress = Math.floor(lunchProgress);
+        currentState = '午休中';
+    } else {
+        // 工作时间
+        if (now < lunchStart) {
+            // 上午工作时间
+            status = '距离午休还有';
+            timeLeft = Math.floor((lunchStart - now) / 1000);
+            const morningProgress = Math.min(100, Math.max(0, ((now - startTime) / (lunchStart - startTime)) * 100));
+            progress = Math.floor(morningProgress);
+            currentState = '上午工作';
+        } else {
+            // 下午工作时间
+            status = '距离下班还有';
+            timeLeft = Math.floor((endTime - now) / 1000);
+            const afternoonProgress = Math.min(100, Math.max(0, ((now - lunchEnd) / (endTime - lunchEnd)) * 100));
+            progress = Math.floor(afternoonProgress);
+            currentState = '下午工作';
+        }
     }
 
-    const totalMinutes = 8 * 60; // 8小时工作制
-    const elapsedMinutes = (now.getHours() - 9) * 60 + now.getMinutes(); // 从9点开始计算
-    const remainingMinutes = Math.max(0, totalMinutes - elapsedMinutes);
+    // 更新时间显示
+    if (timeLeft > 0) {
+        const hours = Math.floor(timeLeft / 3600);
+        const minutes = Math.floor((timeLeft % 3600) / 60);
+        countdownText.textContent = `${status} ${hours}小时${minutes}分`;
+    } else {
+        countdownText.textContent = status;
+    }
+
+    // 更新进度显示
+    progressText.textContent = `${currentState} ${progress}%`;
     
-    const hours = Math.floor(remainingMinutes / 60);
-    const minutes = remainingMinutes % 60;
-    
-    const progress = Math.min(100, Math.max(0, (elapsedMinutes / totalMinutes) * 100));
-    
-    document.querySelector('.progress-text').innerHTML = `
-        <span>距离下班还有 ${hours}小时${minutes}分钟</span>
-        <span>${Math.round(progress)}%</span>
-    `;
-    document.querySelector('.progress-fill').style.width = `${progress}%`;
+    // 更新状态和进度条
+    workProgress.setAttribute('data-state', currentState);
+    document.documentElement.style.setProperty('--work-progress', `${progress}%`);
 }
 
+// 优化天气更新
 async function updateWeather() {
     try {
         let latitude, longitude;
         
-        // 尝试从 localStorage 获取保存的位置信息
         const savedLocation = localStorage.getItem('userLocation');
         if (savedLocation) {
             try {
                 const location = JSON.parse(savedLocation);
-                // 验证位置信息的有效性
                 if (location && 
                     typeof location.latitude === 'number' && 
                     typeof location.longitude === 'number' &&
@@ -99,7 +182,6 @@ async function updateWeather() {
                     
                     latitude = location.latitude;
                     longitude = location.longitude;
-                    console.log('使用保存的位置信息:', { latitude, longitude });
                 } else {
                     throw new Error('保存的位置信息无效');
                 }
@@ -110,7 +192,6 @@ async function updateWeather() {
             }
         }
 
-        // 如果没有有效的保存位置，则请求新的位置
         if (latitude === undefined || longitude === undefined) {
             const position = await new Promise((resolve, reject) => {
                 navigator.geolocation.getCurrentPosition(resolve, reject, {
@@ -123,7 +204,6 @@ async function updateWeather() {
             latitude = position.coords.latitude;
             longitude = position.coords.longitude;
             
-            // 验证新获取的位置信息
             if (typeof latitude !== 'number' || typeof longitude !== 'number' ||
                 isNaN(latitude) || isNaN(longitude) ||
                 latitude < -90 || latitude > 90 ||
@@ -131,16 +211,13 @@ async function updateWeather() {
                 throw new Error('获取的位置信息无效');
             }
             
-            // 保存位置信息到 localStorage
             localStorage.setItem('userLocation', JSON.stringify({
                 latitude,
                 longitude,
                 timestamp: Date.now()
             }));
-            console.log('保存新的位置信息:', { latitude, longitude });
         }
 
-        // 使用和风天气 API 获取天气
         const weatherResponse = await fetch(
             `https://devapi.qweather.com/v7/weather/now?location=${longitude},${latitude}&key=a2aa5892214140fb82303f5da47caa3c`
         );
@@ -150,16 +227,19 @@ async function updateWeather() {
         }
         
         const weatherData = await weatherResponse.json();
-        console.log('天气数据:', weatherData);
         
         if (weatherData.code === '200') {
             const weather = weatherData.now;
             const weatherElement = document.getElementById('weather');
-            weatherElement.innerHTML = `
+            const newContent = `
                 <i class="fas fa-thermometer-half"></i>
                 <span>${weather.temp}°C</span>
                 <span>${weather.text}</span>
             `;
+            
+            if (weatherElement.innerHTML !== newContent) {
+                weatherElement.innerHTML = newContent;
+            }
         } else {
             throw new Error(`天气数据获取失败: ${weatherData.code}`);
         }
@@ -168,247 +248,159 @@ async function updateWeather() {
         console.error('获取天气信息失败:', error);
         const weatherElement = document.getElementById('weather');
         
-        // 根据错误类型显示不同的错误信息
+        let errorContent = '';
         if (error.code === 1) {
-            weatherElement.innerHTML = `
+            errorContent = `
                 <i class="fas fa-map-marker-alt"></i>
                 <span>请允许获取位置</span>
             `;
             localStorage.removeItem('userLocation');
         } else if (error.code === 2) {
-            weatherElement.innerHTML = `
+            errorContent = `
                 <i class="fas fa-map-marker-alt"></i>
                 <span>位置不可用</span>
             `;
             localStorage.removeItem('userLocation');
         } else if (error.code === 3) {
-            weatherElement.innerHTML = `
+            errorContent = `
                 <i class="fas fa-clock"></i>
                 <span>获取位置超时</span>
             `;
         } else if (error.message.includes('位置信息无效')) {
-            weatherElement.innerHTML = `
+            errorContent = `
                 <i class="fas fa-exclamation-triangle"></i>
                 <span>位置信息无效</span>
             `;
             localStorage.removeItem('userLocation');
         } else {
-            weatherElement.innerHTML = `
+            errorContent = `
                 <i class="fas fa-exclamation-circle"></i>
                 <span>天气获取失败</span>
             `;
         }
         
-        weatherElement.style.color = 'var(--error)';
+        if (weatherElement.innerHTML !== errorContent) {
+            weatherElement.innerHTML = errorContent;
+            weatherElement.style.color = 'var(--error)';
+        }
         
-        // 30秒后重试
         setTimeout(updateWeather, 30000);
     }
 }
 
-// 添加清除位置信息的函数
-function clearLocation() {
-    localStorage.removeItem('userLocation');
-    updateWeather(); // 重新获取天气
-}
+// IP信息更新
+async function updateIPInfo() {
+    const ipInfo = document.getElementById('ip-info');
+    const ipIcon = ipInfo.querySelector('i');
+    const ipText = ipInfo.querySelector('span');
 
-// 状态栏功能
-function updateNetworkStatus() {
-    const networkStatus = document.getElementById('network-status');
-    const statusIcon = networkStatus.querySelector('i');
-    const statusText = networkStatus.querySelector('span');
-
-    function updateStatus() {
-        if (navigator.onLine) {
-            // 检测网络速度
-            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-            if (connection) {
-                const speed = connection.downlink;
-                const type = connection.effectiveType;
-                
-                // 根据网络速度设置不同的图标和文本
-                if (speed >= 10) {
-                    statusIcon.className = 'fas fa-wifi';
-                    statusText.textContent = `网络状态: ${type} (${speed.toFixed(1)}Mbps)`;
-                    networkStatus.style.color = 'var(--success)';
-                } else if (speed >= 5) {
-                    statusIcon.className = 'fas fa-wifi';
-                    statusText.textContent = `网络状态: ${type} (${speed.toFixed(1)}Mbps)`;
-                    networkStatus.style.color = 'var(--warning)';
-                } else {
-                    statusIcon.className = 'fas fa-wifi';
-                    statusText.textContent = `网络状态: ${type} (${speed.toFixed(1)}Mbps)`;
-                    networkStatus.style.color = 'var(--error)';
-                }
-            } else {
-                // 如果无法获取网络速度信息
-                statusIcon.className = 'fas fa-wifi';
-                statusText.textContent = '网络状态: 已连接';
-                networkStatus.style.color = 'var(--success)';
+    try {
+        // 使用 ipify API 获取公网 IP
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        
+        // 使用 ip-api.com 获取 IP 详细信息
+        const geoResponse = await fetch(`http://ip-api.com/json/${data.ip}`);
+        const geoData = await geoResponse.json();
+        
+        if (geoData.status === 'success') {
+            const newContent = `IP: ${data.ip} (${geoData.city}, ${geoData.country})`;
+            if (ipText.textContent !== newContent) {
+                ipText.textContent = newContent;
+                ipInfo.style.color = 'var(--success)';
             }
         } else {
-            statusIcon.className = 'fas fa-wifi-slash';
-            statusText.textContent = '网络状态: 未连接';
-            networkStatus.style.color = 'var(--error)';
+            throw new Error('获取地理位置信息失败');
+        }
+    } catch (error) {
+        console.error('获取IP信息失败:', error);
+        const newContent = 'IP: 获取失败';
+        if (ipText.textContent !== newContent) {
+            ipText.textContent = newContent;
+            ipInfo.style.color = 'var(--error)';
         }
     }
-
-    // 初始更新
-    updateStatus();
-
-    // 监听网络状态变化
-    window.addEventListener('online', updateStatus);
-    window.addEventListener('offline', updateStatus);
-
-    // 监听网络速度变化
-    if (navigator.connection) {
-        navigator.connection.addEventListener('change', updateStatus);
-    }
 }
 
-// 初始化状态栏
-function initStatusBar() {
-    // 立即更新一次
-    updateDateTime();
-    updateWorkCountdown();
-    updateNetworkStatus();
-    
-    // 每秒更新时间
-    setInterval(updateDateTime, 1000);
-    
-    // 每分钟更新工作倒计时
-    setInterval(updateWorkCountdown, 60000);
-    
-    // 更新天气信息
-    updateWeather();
-    
-    // 每30分钟更新一次天气
-    setInterval(updateWeather, 1800000);
-}
-
-// 更新最后更新日期
-function updateLastUpdateDate() {
-    const lastUpdateElement = document.getElementById('last-update');
-    if (lastUpdateElement) {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        lastUpdateElement.textContent = `${year}-${month}-${day}`;
-    }
-}
-
-// 页面加载完成后初始化
-document.addEventListener('DOMContentLoaded', () => {
-    initTheme();
-    initStatusBar();
-    initShortcuts();
-});
-
-// 搜索功能
-let currentEngine = 'google';
-let searchTimeout;
+// 优化搜索功能
 const searchInput = document.getElementById('search');
 const searchSuggestions = document.getElementById('search-suggestions');
 
-// 模拟搜索建议数据
-const mockSuggestions = {
-    'goo': ['Google搜索', 'Google翻译', 'Google地图', 'Google Drive'],
-    'git': ['GitHub', 'GitLab', 'Git命令', 'Git教程'],
-    'you': ['YouTube', '优酷', '油管', 'YouTube Music'],
-    'ba': ['百度', '百度翻译', '百度地图', '百度网盘'],
-    'bi': ['Bing', 'Bing翻译', 'Bing地图'],
-    'fa': ['Facebook', 'Facebook Messenger', 'Facebook Watch'],
-    'tw': ['Twitter', 'Twitter搜索', 'Twitter趋势'],
-    'in': ['Instagram', 'Instagram搜索', 'Instagram故事']
-};
-
-// 搜索引擎配置
-const searchEngines = {
-    google: {
-        name: 'Google',
-        url: 'https://www.google.com/search?q=',
-        icon: 'fab fa-google'
-    },
-    bing: {
-        name: 'Bing',
-        url: 'https://www.bing.com/search?q=',
-        icon: 'fab fa-microsoft'
-    },
-    baidu: {
-        name: '百度',
-        url: 'https://www.baidu.com/s?wd=',
-        icon: 'fas fa-search'
+// 创建JSONP回调函数
+window.baidu = {
+    sug: function(data) {
+        if (data && data.s) {
+            displaySuggestions(data.s);
+        }
     }
 };
 
-function showSuggestions(query) {
+// 获取百度搜索建议
+function getBaiduSuggestions(query) {
+    return new Promise((resolve) => {
+        // 移除之前的script标签
+        const oldScript = document.querySelector('script[data-suggestion]');
+        if (oldScript) {
+            document.body.removeChild(oldScript);
+        }
+
+        const script = document.createElement('script');
+        script.src = `https://suggestion.baidu.com/su?wd=${encodeURIComponent(query)}&cb=window.baidu.sug`;
+        script.setAttribute('data-suggestion', 'true');
+        script.onload = () => {
+            document.body.removeChild(script);
+            resolve();
+        };
+        script.onerror = () => {
+            document.body.removeChild(script);
+            resolve();
+        };
+        document.body.appendChild(script);
+    });
+}
+
+const showSuggestions = debounce(async (query) => {
     if (!query) {
         searchSuggestions.classList.remove('active');
         return;
     }
 
-    // 获取建议
-    const suggestions = [];
-    for (const [key, values] of Object.entries(mockSuggestions)) {
-        if (key.startsWith(query.toLowerCase())) {
-            suggestions.push(...values);
-        }
+    try {
+        await getBaiduSuggestions(query);
+    } catch (error) {
+        console.error('获取搜索建议失败:', error);
+        searchSuggestions.classList.remove('active');
     }
+}, 300);
 
-    // 显示建议
-    if (suggestions.length > 0) {
-        searchSuggestions.innerHTML = suggestions.map(suggestion => `
+// 显示搜索建议
+function displaySuggestions(suggestions) {
+    if (suggestions && suggestions.length > 0) {
+        const newContent = suggestions.map(suggestion => `
             <div class="suggestion-item" onclick="selectSuggestion('${suggestion}')">
                 <i class="fas fa-search"></i>
                 <span class="suggestion-text">${suggestion}</span>
                 <span class="suggestion-engine">${searchEngines[currentEngine].name}</span>
             </div>
         `).join('');
-        searchSuggestions.classList.add('active');
+        
+        if (searchSuggestions.innerHTML !== newContent) {
+            searchSuggestions.innerHTML = newContent;
+            searchSuggestions.classList.add('active');
+        }
     } else {
         searchSuggestions.classList.remove('active');
     }
 }
 
-function selectSuggestion(suggestion) {
-    searchInput.value = suggestion;
-    searchSuggestions.classList.remove('active');
-    search();
-}
-
-function search() {
-    const query = searchInput.value.trim();
-    
-    if (!query) {
-        searchInput.focus();
-        return;
-    }
-
-    try {
-        const engine = searchEngines[currentEngine];
-        if (!engine) {
-            throw new Error('搜索引擎配置错误');
-        }
-
-        const searchUrl = `${engine.url}${encodeURIComponent(query)}`;
-        window.location.href = searchUrl;
-        
-        // 清空搜索框
-        searchInput.value = '';
-        searchSuggestions.classList.remove('active');
-    } catch (error) {
-        console.error('搜索失败:', error);
-        // 可以添加错误提示UI
-    }
-}
-
 // 监听输入事件
 searchInput.addEventListener('input', (e) => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-        showSuggestions(e.target.value);
-    }, 200); // 减少延迟时间，使响应更快
+    const query = e.target.value.trim();
+    if (query) {
+        showSuggestions(query);
+    } else {
+        searchSuggestions.classList.remove('active');
+    }
 });
 
 // 点击外部关闭建议
@@ -460,6 +452,143 @@ searchInput.addEventListener('keydown', (e) => {
     }
 });
 
+// 优化主题切换
+function initTheme() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = themeToggle.querySelector('i');
+    
+    // 初始化主题
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(themeIcon, savedTheme);
+    
+    // 添加点击事件监听器
+    themeToggle.onclick = () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(themeIcon, newTheme);
+    };
+}
+
+function updateThemeIcon(icon, theme) {
+    icon.className = theme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+}
+
+// 初始化
+document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
+    initStatusBar();
+    initShortcuts();
+    
+    // 使用 requestAnimationFrame 优化动画性能
+    let lastTime = 0;
+    function animate(currentTime) {
+        if (currentTime - lastTime >= 1000) {
+            updateDateTime();
+            lastTime = currentTime;
+        }
+        requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+    
+    // 使用 setInterval 更新其他状态
+    setInterval(updateWorkCountdown, 60000);
+    setInterval(updateWeather, 1800000);
+});
+
+// 添加清除位置信息的函数
+function clearLocation() {
+    localStorage.removeItem('userLocation');
+    updateWeather(); // 重新获取天气
+}
+
+// 初始化状态栏
+function initStatusBar() {
+    // 立即更新一次
+    updateDateTime();
+    updateWorkCountdown();
+    updateIPInfo();
+    
+    // 每秒更新时间
+    setInterval(updateDateTime, 1000);
+    
+    // 每分钟更新工作倒计时
+    setInterval(updateWorkCountdown, 60000);
+    
+    // 更新天气信息
+    updateWeather();
+    
+    // 每30分钟更新一次天气
+    setInterval(updateWeather, 1800000);
+    
+    // 每5分钟更新一次IP信息
+    setInterval(updateIPInfo, 300000);
+}
+
+// 更新最后更新日期
+function updateLastUpdateDate() {
+    const lastUpdateElement = document.getElementById('last-update');
+    if (lastUpdateElement) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        lastUpdateElement.textContent = `${year}-${month}-${day}`;
+    }
+}
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
+    initStatusBar();
+    initShortcuts();
+    initSearchEngine();
+});
+
+// 搜索功能
+let currentEngine = 'google';
+let searchTimeout;
+
+// 模拟搜索建议数据
+const mockSuggestions = {
+    'goo': ['Google搜索', 'Google翻译', 'Google地图', 'Google Drive'],
+    'git': ['GitHub', 'GitLab', 'Git命令', 'Git教程'],
+    'you': ['YouTube', '优酷', '油管', 'YouTube Music'],
+    'ba': ['百度', '百度翻译', '百度地图', '百度网盘'],
+    'bi': ['Bing', 'Bing翻译', 'Bing地图'],
+    'fa': ['Facebook', 'Facebook Messenger', 'Facebook Watch'],
+    'tw': ['Twitter', 'Twitter搜索', 'Twitter趋势'],
+    'in': ['Instagram', 'Instagram搜索', 'Instagram故事']
+};
+
+// 搜索引擎配置
+const searchEngines = {
+    google: {
+        name: 'Google',
+        url: 'https://www.google.com/search?q=',
+        icon: 'fab fa-google'
+    },
+    bing: {
+        name: 'Bing',
+        url: 'https://www.bing.com/search?q=',
+        icon: 'fab fa-microsoft'
+    },
+    baidu: {
+        name: '百度',
+        url: 'https://www.baidu.com/s?wd=',
+        icon: 'fas fa-search'
+    }
+};
+
+// 初始化搜索引擎
+function initSearchEngine() {
+    const savedEngine = localStorage.getItem('searchEngine') || 'google';
+    setSearchEngine(savedEngine);
+}
+
 // 搜索引擎切换功能
 function setSearchEngine(engine) {
     if (!searchEngines[engine]) {
@@ -468,6 +597,7 @@ function setSearchEngine(engine) {
     }
 
     currentEngine = engine;
+    localStorage.setItem('searchEngine', engine);
     
     // 更新按钮状态
     document.querySelectorAll('.engine-btn').forEach(btn => {
@@ -501,9 +631,6 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-
-// 初始化搜索引擎
-setSearchEngine('google');
 
 // 添加网站数据
 const websites = {
@@ -560,31 +687,6 @@ function generateLinks() {
         section.appendChild(grid);
         main.appendChild(section);
     }
-}
-
-// 主题切换功能
-function initTheme() {
-    const themeToggle = document.getElementById('theme-toggle');
-    const themeIcon = themeToggle.querySelector('i');
-    
-    // 从 localStorage 获取保存的主题
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    updateThemeIcon(themeIcon, savedTheme);
-    
-    // 添加主题切换事件监听
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        updateThemeIcon(themeIcon, newTheme);
-    });
-}
-
-function updateThemeIcon(icon, theme) {
-    icon.className = theme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
 }
 
 // 快捷方式数据
@@ -650,4 +752,36 @@ function initShortcuts() {
         `;
         linksGrid.appendChild(linkCard);
     });
+}
+
+function selectSuggestion(suggestion) {
+    searchInput.value = suggestion;
+    searchSuggestions.classList.remove('active');
+    search();
+}
+
+function search() {
+    const query = searchInput.value.trim();
+    
+    if (!query) {
+        searchInput.focus();
+        return;
+    }
+
+    try {
+        const engine = searchEngines[currentEngine];
+        if (!engine) {
+            throw new Error('搜索引擎配置错误');
+        }
+
+        const searchUrl = `${engine.url}${encodeURIComponent(query)}`;
+        window.location.href = searchUrl;
+        
+        // 清空搜索框
+        searchInput.value = '';
+        searchSuggestions.classList.remove('active');
+    } catch (error) {
+        console.error('搜索失败:', error);
+        // 可以添加错误提示UI
+    }
 } 
