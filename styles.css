@@ -441,14 +441,14 @@ body {
 
 header {
     text-align: center;
-    margin-bottom: 3rem;
-    padding-top: 1rem;
+    margin-bottom: 4rem;
+    padding-top: 2rem;
 }
 
 h1 {
     font-size: 2.2rem;
     color: var(--text-primary);
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     font-weight: 500;
     letter-spacing: -0.5px;
     line-height: 1.3;
@@ -464,7 +464,52 @@ h1 {
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
-    padding: 0 1rem;
+    padding: 1rem;
+    position: relative;
+}
+
+.search-box::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 240px;
+    background: linear-gradient(135deg, 
+        var(--primary-light) 0%,
+        var(--primary) 30%,
+        var(--primary-dark) 60%,
+        var(--primary) 100%
+    );
+    opacity: 0.08;
+    border-radius: 40px;
+    filter: blur(50px);
+    z-index: -1;
+    transition: all var(--transition-normal) ease;
+}
+
+.search-box:hover::before {
+    opacity: 0.12;
+    filter: blur(60px);
+    transform: translate(-50%, -50%) scale(1.05);
+}
+
+[data-theme="dark"] .search-box::before {
+    opacity: 0.12;
+    filter: blur(60px);
+    background: linear-gradient(135deg, 
+        var(--primary-light) 0%,
+        var(--primary) 40%,
+        var(--primary-dark) 70%,
+        var(--primary) 100%
+    );
+}
+
+[data-theme="dark"] .search-box:hover::before {
+    opacity: 0.18;
+    filter: blur(70px);
+    transform: translate(-50%, -50%) scale(1.05);
 }
 
 .search-container {
@@ -816,8 +861,8 @@ footer::before {
     }
 
     header {
-        margin-bottom: 2rem;
-        padding-top: 0.5rem;
+        margin-bottom: 3rem;
+        padding-top: 1.5rem;
     }
 
     main {
@@ -831,7 +876,7 @@ footer::before {
 
     h1 {
         font-size: 1.8rem;
-        margin-bottom: 1.2rem;
+        margin-bottom: 1.5rem;
     }
 
     .links-grid {
@@ -855,7 +900,8 @@ footer::before {
     }
 
     .search-box {
-        gap: 0.5rem;
+        padding: 0.75rem;
+        margin-bottom: 2rem;
     }
 
     .search-engine-selector {
