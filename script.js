@@ -98,6 +98,13 @@ function updateWorkCountdown() {
     const countdownText = document.getElementById('work-countdown');
     const progressText = document.getElementById('work-progress-text');
     const workProgress = document.querySelector('.work-progress');
+
+    // 检查必要的元素是否存在
+    if (!countdownText || !progressText || !workProgress) {
+        console.warn('工作倒计时相关元素未找到，跳过更新');
+        return;
+    }
+
     let status = '';
     let timeLeft = 0;
     let progress = 0;
@@ -144,21 +151,25 @@ function updateWorkCountdown() {
         }
     }
 
-    // 更新时间显示
-    if (timeLeft > 0) {
-        const hours = Math.floor(timeLeft / 3600);
-        const minutes = Math.floor((timeLeft % 3600) / 60);
-        countdownText.textContent = `${status} ${hours}小时${minutes}分`;
-    } else {
-        countdownText.textContent = status;
-    }
+    try {
+        // 更新时间显示
+        if (timeLeft > 0) {
+            const hours = Math.floor(timeLeft / 3600);
+            const minutes = Math.floor((timeLeft % 3600) / 60);
+            countdownText.textContent = `${status} ${hours}小时${minutes}分`;
+        } else {
+            countdownText.textContent = status;
+        }
 
-    // 更新进度显示
-    progressText.textContent = `${currentState} ${progress}%`;
-    
-    // 更新状态和进度条
-    workProgress.setAttribute('data-state', currentState);
-    document.documentElement.style.setProperty('--work-progress', `${progress}%`);
+        // 更新进度显示
+        progressText.textContent = `${currentState} ${progress}%`;
+        
+        // 更新状态和进度条
+        workProgress.setAttribute('data-state', currentState);
+        document.documentElement.style.setProperty('--work-progress', `${progress}%`);
+    } catch (error) {
+        console.error('更新工作倒计时时出错:', error);
+    }
 }
 
 // 优化天气更新
