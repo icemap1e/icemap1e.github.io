@@ -302,31 +302,126 @@ async function updateWeather() {
 // IP信息更新
 async function updateIPInfo() {
     const ipInfo = document.getElementById('ip-info');
+    if (!ipInfo) {
+        console.warn('IP信息元素未找到，跳过更新');
+        return;
+    }
+
     const ipIcon = ipInfo.querySelector('i');
     const ipText = ipInfo.querySelector('span');
 
     try {
-        // 使用 ipify API 获取公网 IP
-        const response = await fetch('https://api.ipify.org?format=json');
-        const data = await response.json();
-        
-        // 使用 ip-api.com 获取 IP 详细信息
-        const geoResponse = await fetch(`http://ip-api.com/json/${data.ip}`);
-        const geoData = await geoResponse.json();
-        
-        if (geoData.status === 'success') {
-            const newContent = `IP: ${data.ip} (${geoData.city}, ${geoData.country})`;
+        // 尝试多个 IP 获取 API
+        let ip = null;
+        const ipApis = [
+            // 主 API
+            async () => {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            },
+            // 备用 API 1
+            async () => {
+                const response = await fetch('https://api.ip.sb/ip');
+                return await response.text();
+            },
+            // 备用 API 2
+            async () => {
+                const response = await fetch('https://ifconfig.me/ip');
+                return await response.text();
+            },
+            // 备用 API 3
+            async () => {
+                const response = await fetch('https://icanhazip.com');
+                return await response.text();
+            }
+        ];
+
+        // 依次尝试每个 IP API
+        for (const api of ipApis) {
+            try {
+                ip = await api();
+                if (ip) break;
+            } catch (error) {
+                console.warn('IP获取API调用失败，尝试下一个:', error);
+                continue;
+            }
+        }
+
+        if (!ip) {
+            throw new Error('无法获取IP地址');
+        }
+
+        // 尝试多个 IP 地理位置 API
+        let geoData = null;
+        const geoApis = [
+            // 主 API
+            async () => {
+                const response = await fetch(`https://ip-api.com/json/${ip}`);
+                const data = await response.json();
+                if (data.status === 'success') {
+                    return {
+                        city: data.city,
+                        country: data.country
+                    };
+                }
+                throw new Error('API 1 failed');
+            },
+            // 备用 API 1
+            async () => {
+                const response = await fetch(`https://ipapi.co/${ip}/json/`);
+                const data = await response.json();
+                if (data.city && data.country_name) {
+                    return {
+                        city: data.city,
+                        country: data.country_name
+                    };
+                }
+                throw new Error('API 2 failed');
+            },
+            // 备用 API 2
+            async () => {
+                const response = await fetch(`https://ipinfo.io/${ip}/json`);
+                const data = await response.json();
+                if (data.city && data.country) {
+                    return {
+                        city: data.city,
+                        country: data.country
+                    };
+                }
+                throw new Error('API 3 failed');
+            }
+        ];
+
+        // 依次尝试每个地理位置 API
+        for (const api of geoApis) {
+            try {
+                geoData = await api();
+                if (geoData) break;
+            } catch (error) {
+                console.warn('IP地理位置API调用失败，尝试下一个:', error);
+                continue;
+            }
+        }
+
+        if (geoData) {
+            const newContent = `IP: ${ip} (${geoData.city}, ${geoData.country})`;
             if (ipText.textContent !== newContent) {
                 ipText.textContent = newContent;
                 ipInfo.style.color = 'var(--success)';
             }
         } else {
-            throw new Error('获取地理位置信息失败');
+            // 如果所有地理位置 API 都失败，至少显示 IP
+            const newContent = `IP: ${ip}`;
+            if (ipText.textContent !== newContent) {
+                ipText.textContent = newContent;
+                ipInfo.style.color = 'var(--warning)';
+            }
         }
     } catch (error) {
         console.error('获取IP信息失败:', error);
         const newContent = 'IP: 获取失败';
-        if (ipText.textContent !== newContent) {
+        if (ipText && ipText.textContent !== newContent) {
             ipText.textContent = newContent;
             ipInfo.style.color = 'var(--error)';
         }
