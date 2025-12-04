@@ -1843,43 +1843,57 @@ select.setting-control option:hover {
     overflow: hidden;
 }
 
-/* 为整个input-group-wide添加焦点描边效果 */
+/* 简单的焦点效果：只有容器显示光晕 */
 .input-group-wide:focus-within {
     box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
     border-radius: 8px;
     overflow: hidden;
 }
 
-/* 输入框聚焦时恢复完整边框，与容器焦点描边匹配 */
+/* 完全禁用输入框和按钮的焦点样式，保持原样 */
 .input-group-wide input.setting-control:focus {
     outline: none !important;
-    border-color: var(--google-blue) !important;
+    border-color: var(--border-color) !important;
     box-shadow: none !important;
-    border-right: 1px solid var(--google-blue) !important;
+    border-right: none !important;
 }
 
-/* 同时让按钮也聚焦时匹配边框颜色 */
+.input-group-wide .setting-control:focus {
+    outline: none !important;
+    border-color: var(--border-color) !important;
+    box-shadow: none !important;
+    border-right: none !important;
+}
+
+/* 按钮也保持原样 */
 .input-group-wide:focus-within .toggle-password {
-    border-color: var(--google-blue) !important;
-    border-left: 1px solid var(--google-blue) !important;
+    border-color: var(--border-color) !important;
+    border-left: none !important;
 }
 
-/* 暗色模式下的焦点效果 */
+/* 暗色模式下的简单焦点效果 */
 [data-theme="dark"] .input-group-wide:focus-within {
     box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
 }
 
-/* 暗色模式下聚焦时使用accent颜色 */
+/* 暗色模式下也完全禁用内部焦点样式 */
 [data-theme="dark"] .input-group-wide input.setting-control:focus {
     outline: none !important;
-    border-color: var(--accent-color) !important;
+    border-color: var(--border-light) !important;
     box-shadow: none !important;
-    border-right: 1px solid var(--accent-color) !important;
+    border-right: none !important;
+}
+
+[data-theme="dark"] .input-group-wide .setting-control:focus {
+    outline: none !important;
+    border-color: var(--border-light) !important;
+    box-shadow: none !important;
+    border-right: none !important;
 }
 
 [data-theme="dark"] .input-group-wide:focus-within .toggle-password {
-    border-color: var(--accent-color) !important;
-    border-left: 1px solid var(--accent-color) !important;
+    border-color: var(--border-light) !important;
+    border-left: none !important;
 }
 
 .input-group-wide .toggle-password {
