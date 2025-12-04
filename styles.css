@@ -1843,12 +1843,13 @@ select.setting-control option:hover {
     overflow: hidden;
 }
 
-/* 输入框自身不显示box-shadow，只改变边框颜色 */
+/* 输入框自身不显示box-shadow，只改变边框颜色 - 使用更高优先级 */
+.input-group-wide input.setting-control:focus,
 .input-group-wide .setting-control:focus {
-    outline: none;
-    border-color: var(--google-blue);
-    box-shadow: none;
-    border-right: none;
+    outline: none !important;
+    border-color: var(--google-blue) !important;
+    box-shadow: none !important;
+    border-right: none !important;
 }
 
 /* 暗色模式下的焦点效果 */
@@ -1856,10 +1857,11 @@ select.setting-control option:hover {
     box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
 }
 
+[data-theme="dark"] .input-group-wide input.setting-control:focus,
 [data-theme="dark"] .input-group-wide .setting-control:focus {
-    border-color: var(--accent-color);
-    box-shadow: none;
-    border-right: none;
+    border-color: var(--accent-color) !important;
+    box-shadow: none !important;
+    border-right: none !important;
 }
 
 .input-group-wide .toggle-password {
