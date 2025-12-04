@@ -1836,30 +1836,30 @@ select.setting-control option:hover {
     width: auto;
 }
 
-/* 修复input-group-wide内输入框的焦点描边 */
-.input-group-wide .setting-control:focus {
-    outline: none;
-    border-color: var(--google-blue);
-    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
-    border-right: none;
-}
-
-/* 暗色模式下的焦点描边 */
-[data-theme="dark"] .input-group-wide .setting-control:focus {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
-    border-right: none;
-}
-
-/* 为整个input-group-wide添加焦点描边效果 */
+/* 为整个input-group-wide添加焦点描边效果，移除输入框自身焦点样式避免重影 */
 .input-group-wide:focus-within {
     box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
     border-radius: 8px;
     overflow: hidden;
 }
 
+/* 输入框自身不显示box-shadow，只改变边框颜色 */
+.input-group-wide .setting-control:focus {
+    outline: none;
+    border-color: var(--google-blue);
+    box-shadow: none;
+    border-right: none;
+}
+
+/* 暗色模式下的焦点效果 */
 [data-theme="dark"] .input-group-wide:focus-within {
     box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+}
+
+[data-theme="dark"] .input-group-wide .setting-control:focus {
+    border-color: var(--accent-color);
+    box-shadow: none;
+    border-right: none;
 }
 
 .input-group-wide .toggle-password {
