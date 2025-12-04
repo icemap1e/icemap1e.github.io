@@ -896,6 +896,17 @@ function saveAllSettings() {
         getWeather(city);
     }
 
+    // 保存AI API地址
+    const aiApiUrlInput = document.getElementById('ai-api-url');
+    if (aiApiUrlInput) {
+        const apiUrl = aiApiUrlInput.value.trim();
+        if (apiUrl) {
+            localStorage.setItem('ai-api-url', apiUrl);
+        } else {
+            localStorage.setItem('ai-api-url', 'https://api.openai.com/v1/chat/completions');
+        }
+    }
+
     // 保存AI API密钥
     const aiApiKeyInput = document.getElementById('ai-api-key');
     const apiKey = aiApiKeyInput.value.trim();
@@ -1011,6 +1022,15 @@ function loadSavedSettings() {
     const savedCity = localStorage.getItem('weather-city');
     if (savedCity && cityInput) {
         cityInput.value = savedCity;
+    }
+
+    // 加载AI API地址
+    const aiApiUrlInput = document.getElementById('ai-api-url');
+    const savedAiApiUrl = localStorage.getItem('ai-api-url');
+    if (savedAiApiUrl && aiApiUrlInput) {
+        aiApiUrlInput.value = savedAiApiUrl;
+    } else if (aiApiUrlInput) {
+        aiApiUrlInput.value = 'https://api.openai.com/v1/chat/completions';
     }
 
     // 加载AI API密钥
@@ -1609,6 +1629,11 @@ async function sendAIMessage(message) {
     isAiProcessing = false;
 }
 
+// 获取AI API地址
+function getAiApiUrl() {
+    return localStorage.getItem('ai-api-url') || 'https://api.openai.com/v1/chat/completions';
+}
+
 // 调用真实AI API
 async function callAIAPI(message) {
     // 使用用户设置的API密钥
@@ -1617,7 +1642,7 @@ async function callAIAPI(message) {
     if (!apiKey) {
         throw new Error('请先在设置中配置AI API密钥');
     }
-    const apiUrl = 'https://api.nyxar.org/v1/chat/completions';
+    const apiUrl = getAiApiUrl();
 
     const response = await fetch(apiUrl, {
         method: 'POST',
@@ -1669,7 +1694,7 @@ async function callAIForSearchResult(query) {
         if (!apiKey) {
             throw new Error('请先在设置中配置AI API密钥');
         }
-        const apiUrl = 'https://api.nyxar.org/v1/chat/completions';
+        const apiUrl = getAiApiUrl();
 
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -2218,7 +2243,7 @@ class AIHubManager {
             if (!apiKey) {
                 throw new Error('请先在设置中配置AI API密钥');
             }
-            const apiUrl = 'https://api.nyxar.org/v1/chat/completions';
+            const apiUrl = getAiApiUrl();
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -2451,7 +2476,7 @@ class AIHubManager {
             if (!apiKey) {
                 throw new Error('请先在设置中配置AI API密钥');
             }
-            const apiUrl = 'https://api.nyxar.org/v1/chat/completions';
+            const apiUrl = getAiApiUrl();
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
