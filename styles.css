@@ -1682,6 +1682,26 @@ select.setting-control option:hover {
     box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
 }
 
+/* 高优先级覆盖：禁用input-group-wide内所有元素的焦点样式 */
+.input-group-wide .setting-control:focus,
+body .input-group-wide .setting-control:focus,
+html .input-group-wide .setting-control:focus {
+    outline: none !important;
+    border-color: var(--border-color) !important;
+    box-shadow: none !important;
+    border-right: none !important;
+}
+
+/* 暗色模式下的高优先级覆盖 */
+[data-theme="dark"] .input-group-wide .setting-control:focus,
+body [data-theme="dark"] .input-group-wide .setting-control:focus,
+html [data-theme="dark"] .input-group-wide .setting-control:focus {
+    outline: none !important;
+    border-color: var(--border-light) !important;
+    box-shadow: none !important;
+    border-right: none !important;
+}
+
 /* 暗色模式文本对比度增强 */
 [data-theme="dark"] .setting-label small {
     color: var(--text-muted);
