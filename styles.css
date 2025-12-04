@@ -1682,24 +1682,38 @@ select.setting-control option:hover {
     box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
 }
 
-/* 高优先级覆盖：禁用input-group-wide内所有元素的焦点样式 */
-.input-group-wide .setting-control:focus,
-body .input-group-wide .setting-control:focus,
-html .input-group-wide .setting-control:focus {
+/* 终极覆盖：彻底禁用input-group-wide内所有元素的焦点样式 */
+* .input-group-wide *:focus,
+* .input-group-wide .setting-control:focus,
+html body .input-group-wide .setting-control:focus,
+html body .input-group-wide input.setting-control:focus,
+#settings-modal .input-group-wide .setting-control:focus {
     outline: none !important;
     border-color: var(--border-color) !important;
-    box-shadow: none !important;
+    border-top-color: var(--border-color) !important;
+    border-bottom-color: var(--border-color) !important;
+    border-left-color: var(--border-color) !important;
+    border-right-color: var(--border-color) !important;
     border-right: none !important;
+    box-shadow: none !important;
+    background-color: var(--bg-primary) !important;
 }
 
-/* 暗色模式下的高优先级覆盖 */
-[data-theme="dark"] .input-group-wide .setting-control:focus,
-body [data-theme="dark"] .input-group-wide .setting-control:focus,
-html [data-theme="dark"] .input-group-wide .setting-control:focus {
+/* 终极暗色模式覆盖 */
+[data-theme="dark"] * .input-group-wide *:focus,
+[data-theme="dark"] * .input-group-wide .setting-control:focus,
+html body [data-theme="dark"] .input-group-wide .setting-control:focus,
+html body [data-theme="dark"] .input-group-wide input.setting-control:focus,
+#settings-modal [data-theme="dark"] .input-group-wide .setting-control:focus {
     outline: none !important;
     border-color: var(--border-light) !important;
-    box-shadow: none !important;
+    border-top-color: var(--border-light) !important;
+    border-bottom-color: var(--border-light) !important;
+    border-left-color: var(--border-light) !important;
+    border-right-color: var(--border-light) !important;
     border-right: none !important;
+    box-shadow: none !important;
+    background-color: var(--bg-tertiary) !important;
 }
 
 /* 暗色模式文本对比度增强 */
