@@ -1836,18 +1836,22 @@ select.setting-control option:hover {
     width: auto;
 }
 
-/* 为整个input-group-wide添加焦点描边效果，移除输入框自身焦点样式避免重影 */
+/* 为整个input-group-wide添加焦点描边效果 */
 .input-group-wide:focus-within {
     box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
     border-radius: 8px;
     overflow: hidden;
 }
 
-/* 输入框自身不显示box-shadow，只改变边框颜色 - 使用更高优先级 */
+/* 完全禁用input-group-wide内所有元素的焦点样式 */
+.input-group-wide:focus-within * {
+    outline: none !important;
+}
+
 .input-group-wide input.setting-control:focus,
 .input-group-wide .setting-control:focus {
     outline: none !important;
-    border-color: var(--google-blue) !important;
+    border-color: var(--border-color) !important;
     box-shadow: none !important;
     border-right: none !important;
 }
@@ -1857,9 +1861,11 @@ select.setting-control option:hover {
     box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
 }
 
+/* 暗色模式下也完全禁用焦点样式 */
 [data-theme="dark"] .input-group-wide input.setting-control:focus,
 [data-theme="dark"] .input-group-wide .setting-control:focus {
-    border-color: var(--accent-color) !important;
+    outline: none !important;
+    border-color: var(--border-light) !important;
     box-shadow: none !important;
     border-right: none !important;
 }
