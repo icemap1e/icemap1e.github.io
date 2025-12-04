@@ -835,22 +835,8 @@ function setupSettings() {
         }
     });
 
-    // AI API密钥设置
+    // AI API密钥设置（移除了密码切换按钮功能）
     const aiApiKeyInput = document.getElementById('ai-api-key');
-    const togglePasswordBtn = document.querySelector('.toggle-password');
-
-    togglePasswordBtn.addEventListener('click', () => {
-        const targetId = togglePasswordBtn.dataset.target;
-        const targetInput = document.getElementById(targetId);
-
-        if (targetInput.type === 'password') {
-            targetInput.type = 'text';
-            togglePasswordBtn.innerHTML = '<i class="fas fa-eye-slash"></i>';
-        } else {
-            targetInput.type = 'password';
-            togglePasswordBtn.innerHTML = '<i class="fas fa-eye"></i>';
-        }
-    });
 
     // 书签管理功能已移除
 
@@ -870,6 +856,25 @@ function setupSettings() {
 
     // 加载已保存的设置
     loadSavedSettings();
+}
+
+// 应用已保存的配置（在页面加载时立即生效）
+function applySavedSettings() {
+    // 应用主题设置
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        if (savedTheme !== 'auto') {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        } else {
+            // 跟随系统主题
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+            document.documentElement.setAttribute('data-theme', prefersDark.matches ? 'dark' : 'light');
+        }
+    }
+
+    // 确保API配置已生效（不需要操作UI）
+    // 这些配置会在需要时通过getAiModel()和getAiApiUrl()函数读取
+    console.log('已应用保存的配置');
 }
 
 // 打开设置弹窗
@@ -1306,12 +1311,7 @@ function renderConversations() {
             }
         });
 
-        // 添加删除按钮事件监听
-        const deleteBtn = item.querySelector('.delete-conversation');
-        deleteBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            deleteConversation(conversation.id);
-        });
+        // 删除按钮事件将通过事件委托处理
 
         container.appendChild(item);
     });
@@ -1576,6 +1576,9 @@ async function sendAIMessage(message) {
         const response = await callAIAPI(message);
         removeAIProcessing();
 
+        // 更新连接状态为已连接
+        updateConnectionStatus(true, '低');
+
         // 添加AI响应
         const aiMessage = {
             role: 'ai',
@@ -1593,7 +1596,13 @@ async function sendAIMessage(message) {
 
     } catch (error) {
         console.error('AI API调用失败:', error);
+        console.error('错误详情:', error.message);
+        console.error('API地址:', getAiApiUrl());
+        console.error('使用的模型:', getAiModel());
         removeAIProcessing();
+
+        // 更新连接状态为未连接
+        updateConnectionStatus(false, null);
 
         // 显示错误信息并提供模拟响应
         const errorMessage = getAIErrorMessage(error);
@@ -1634,6 +1643,46 @@ function getAiApiUrl() {
     return localStorage.getItem('ai-api-url') || 'https://api.openai.com/v1/chat/completions';
 }
 
+// 获取AI模型
+function getAiModel() {
+    return localStorage.getItem('ai-model') || 'gpt-3.5-turbo';
+}
+
+// 测试API连接
+async function testApiConnection(apiKey, apiUrl) {
+    try {
+        console.log('测试API连接...');
+        console.log('API URL:', apiUrl);
+
+        // 简单的ping测试 - 发送最少的请求
+        const testResponse = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: getAiModel(),
+                messages: [
+                    {
+                        role: 'user',
+                        content: 'test'
+                    }
+                ],
+                max_tokens: 1
+            })
+        });
+
+        console.log('测试响应状态:', testResponse.status);
+        console.log('测试响应头:', testResponse.headers);
+
+        return testResponse.ok;
+    } catch (error) {
+        console.error('API连接测试失败:', error);
+        return false;
+    }
+}
+
 // 调用真实AI API
 async function callAIAPI(message) {
     // 使用用户设置的API密钥
@@ -1644,38 +1693,46 @@ async function callAIAPI(message) {
     }
     const apiUrl = getAiApiUrl();
 
-    const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            model: 'gpt-4.1',
-            messages: [
-                {
-                    role: 'system',
-                    content: `你是一个智能助手，集成在个人导航页中。你的特点：
+    // 调试信息：打印请求详情
+    const requestData = {
+        model: getAiModel(),
+        messages: [
+            {
+                role: 'system',
+                content: `你是一个智能助手，集成在个人导航页中。你的特点：
 - 回答要简洁明了，适合导航页的使用场景
 - 专注于帮助用户解决问题和提供建议
 - 如果遇到技术问题，优先提供实际可行的解决方案
 - 保持友好专业的语调
 - 回答长度控制在200字以内，重要信息可以适当延长
 
-当用户询问实时信息（新闻、股价、天气等）时：
-1. 明确告知用户你无法访问实时数据
-2. 提供具体、可操作的建议和链接
-3. 推荐可靠的搜索工具和方法
-4. 如果是常识性问题，可以基于知识库回答`
-                },
-                {
-                    role: 'user',
-                    content: message
-                }
-            ],
-            max_tokens: 1000,
-            temperature: 0.7
-        })
+当前时间：${new Date().toLocaleString()}`,
+                max_tokens: 1000,
+                temperature: 0.7
+            },
+            {
+                role: 'user',
+                content: message
+            }
+        ],
+        max_tokens: 1000,
+        temperature: 0.7
+    };
+
+    console.log('API请求详情:', {
+        url: apiUrl,
+        model: getAiModel(),
+        hasApiKey: !!apiKey,
+        requestSize: JSON.stringify(requestData).length
+    });
+
+    const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
     });
 
     if (!response.ok) {
@@ -1703,7 +1760,7 @@ async function callAIForSearchResult(query) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: 'gpt-4.1',
+                model: getAiModel(),
                 messages: [
                     {
                         role: 'system',
@@ -1870,6 +1927,36 @@ function removeAIProcessing() {
     const processingDiv = document.getElementById('ai-processing');
     if (processingDiv) {
         processingDiv.remove();
+    }
+}
+
+// 更新连接状态
+function updateConnectionStatus(isConnected, latency) {
+    const connectionStatusElement = document.getElementById('connection-status');
+    if (connectionStatusElement) {
+        if (isConnected) {
+            connectionStatusElement.innerHTML = '<i class="fas fa-circle"></i> 已连接';
+            connectionStatusElement.style.color = '#10B981'; // 绿色
+        } else {
+            connectionStatusElement.innerHTML = '<i class="fas fa-circle"></i> 未连接';
+            connectionStatusElement.style.color = '#EF4444'; // 红色
+        }
+    }
+}
+
+// 更新推断模块状态
+function updateInferenceStatus(isNormal) {
+    const statusDot = document.querySelector('.status-dot');
+    const statusText = document.getElementById('inference-status-text');
+
+    if (statusDot && statusText) {
+        if (isNormal) {
+            statusDot.className = 'status-dot status-normal';
+            statusText.textContent = '运行正常';
+        } else {
+            statusDot.className = 'status-dot status-error';
+            statusText.textContent = '连接异常';
+        }
     }
 }
 
@@ -2065,6 +2152,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初始化深色模式
     setupDarkMode();
 
+    // 添加删除对话按钮的事件委托
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.delete-conversation')) {
+            e.preventDefault();
+            e.stopPropagation();
+            const deleteBtn = e.target.closest('.delete-conversation');
+            const conversationId = deleteBtn.dataset.id;
+            if (conversationId) {
+                deleteConversation(conversationId);
+            }
+        }
+    });
+
     // 处理欢迎消息的Markdown
     const welcomeText = document.querySelector('.ai-welcome .ai-text');
     if (welcomeText) {
@@ -2124,6 +2224,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 设置面板功能
     setupSettings();
+
+    // 应用已保存的配置（不需要打开设置面板）
+    applySavedSettings();
 
     // 设置AI助手功能
     setupAI();
@@ -2252,7 +2355,7 @@ class AIHubManager {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: 'gpt-4.1',
+                    model: getAiModel(),
                     messages: [
                         {
                             role: 'system',
@@ -2425,7 +2528,7 @@ class AIHubManager {
         } catch (error) {
             console.error('解析AI响应失败:', error);
             console.log('原始响应:', response); // 添加调试信息
-            return this.getFallbackContent();
+            throw new Error('AI响应解析失败');
         }
     }
 
@@ -2440,25 +2543,7 @@ class AIHubManager {
         // 状态指示器已经始终可见并更新
     }
 
-    // 获取备用内容
-    getFallbackContent() {
-        const env = this.getCurrentEnvironment();
-
-        return {
-            insights: [
-                `前额叶皮层激活强度 85%（09:45-11:20）达到深度工作状态`,
-                `工作记忆容量利用率 78%（${env.timeOfDay}）保持高效信息处理`,
-                '默认模式网络抑制指数 92% - 专注网络连接异常稳固',
-                '多巴胺基线水平稳定 - 认知灵活性维持最佳区间'
-            ],
-            suggestions: [
-                '10:00-12:15 安排分析任务，利用前额叶激活峰值提升产出 28%',
-                '13:30 执行20分钟正念神经反馈，恢复执行功能至基准线',
-                '20:15-21:00 规划创造活动，基于昼夜节律预测创造性能提升 35%',
-                '16:45 强制认知重置，防止累积性疲劳影响决策质量'
-            ]
-        };
-    }
+    // getFallbackContent方法已移除，不再使用模拟数据
 
     // 调用AI API生成内容
     async generateContent() {
@@ -2485,7 +2570,7 @@ class AIHubManager {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: 'gpt-4.1',
+                    model: getAiModel(),
                     messages: [
                         {
                             role: 'system',
@@ -2513,15 +2598,12 @@ class AIHubManager {
 
         } catch (error) {
             console.error('AI内容生成失败:', error);
+            console.error('错误详情:', error.message);
+            console.error('API地址:', apiUrl);
+            console.error('使用的模型:', getAiModel());
 
-            // 使用备用内容
-            const fallbackContent = this.getFallbackContent();
-            this.displayContent(fallbackContent);
-
-            // 显示错误提示
-            setTimeout(() => {
-                this.showError();
-            }, 1000);
+            // 直接显示错误，不使用备用内容
+            this.showError();
         } finally {
             this.isGenerating = false;
         }
@@ -2585,6 +2667,9 @@ class AIHubManager {
         // 更新系统参数指标条为实际参数
         this.updateSystemMetrics();
 
+        // 更新推断模块状态为正常
+        updateInferenceStatus(true);
+
         // 异步生成系统状态 - 更新状态栏的延迟信息
         this.generateSystemStatus().then(systemStatus => {
             const latencyElement = document.querySelector('.latency-status');
@@ -2625,6 +2710,7 @@ class AIHubManager {
         this.showLoadedContent();
     }
 
+    
     // 设置加载状态
     setLoadingState() {
         const metricsBar = document.getElementById('system-metrics-bar');
@@ -2676,9 +2762,20 @@ class AIHubManager {
             aiHubCard.classList.remove('loading');
         }
 
+        // 清除所有内容显示
         document.getElementById('ai-hub-loading').style.display = 'none';
         document.getElementById('ai-hub-insights').style.display = 'none';
+        document.getElementById('smart-suggestions').style.display = 'none';
         document.getElementById('ai-hub-error').style.display = 'flex';
+
+        // 更新推断模块状态为异常
+        updateInferenceStatus(false);
+
+        // 清除系统参数指标
+        const metricsBar = document.getElementById('system-metrics-bar');
+        if (metricsBar) {
+            metricsBar.innerHTML = '';
+        }
     }
 
     // 更新系统参数指标条
@@ -2722,6 +2819,14 @@ class AIHubManager {
 // 初始化AI中枢面板
 function initializeAIHub() {
     aiHubManager = new AIHubManager();
+
+    // 检查API密钥配置，设置初始状态
+    const apiKey = localStorage.getItem('ai-api-key');
+    if (!apiKey) {
+        // 没有配置API密钥，设置初始状态为未连接
+        updateConnectionStatus(false, null);
+        updateInferenceStatus(false);
+    }
 
     // 每次都生成新内容，不使用缓存
     aiHubManager.generateContent();

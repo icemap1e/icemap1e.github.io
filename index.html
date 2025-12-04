@@ -106,13 +106,13 @@
                                     <div class="ai-hub-status-bar">
                                         <span class="status-item">
                                             <span class="status-dot status-normal"></span>
-                                            推断模块：运行正常
+                                            推断模块：<span id="inference-status-text">运行正常</span>
                                         </span>
                                         <span class="status-item">
                                             模型版本：<span class="version-tag">v1.4</span>
                                         </span>
                                         <span class="status-item">
-                                            上次刷新：<span class="update-time" id="ai-hub-last-update">--</span>
+                                            上次刷新：<span class="update-time" id="ai-hub-last-update">--:-- 更新</span>
                                         </span>
                                         <span class="status-item">
                                             延迟：<span class="latency-status">低</span>
@@ -476,17 +476,14 @@
                             </div>
                             <div class="control-item">
                                 <div class="control-label">API密钥</div>
-                                <div class="input-group-wide">
-                                    <input type="password" id="ai-api-key" class="setting-control" placeholder="sk-...">
-                                    <button type="button" class="toggle-password" data-target="ai-api-key">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
+                                <input type="password" id="ai-api-key" class="setting-control" placeholder="sk-...">
                                 <small class="setting-note">支持OpenAI兼容格式的API密钥。留空将使用默认服务。</small>
                             </div>
                             <div class="control-item">
                                 <div class="control-label">AI模型</div>
                                 <select id="ai-model" class="setting-control">
+                                    <option value="gpt-4o">GPT-4o</option>
+                                    <option value="gpt-4o-mini">GPT-4o Mini</option>
                                     <option value="gpt-4.1">GPT-4.1</option>
                                     <option value="gpt-4">GPT-4</option>
                                     <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>

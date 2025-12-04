@@ -142,7 +142,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
 }
 
 .status-left {
@@ -336,7 +336,7 @@ body {
 /* 主要内容区域 */
 .main-content {
     flex: 1;
-    padding: 30px 0 10px;
+    padding: 25px 0 12px;
     max-width: 1200px;
     margin: 0 auto;
     width: 100%;
@@ -351,18 +351,26 @@ body {
     }
 
     .search-section {
-        margin-bottom: 8px;
-        padding-bottom: 8px;
+        margin-bottom: 15px;
+        padding-bottom: 12px;
+    }
+
+    .bookmarks-section {
+        margin-bottom: 15px;
     }
 
     .ai-hub-section {
-        margin-bottom: 6px;
-        padding-bottom: 6px;
+        margin-bottom: 15px;
+        padding-bottom: 12px;
     }
 
     .content-modules {
         gap: 16px;
-        padding: 0 24px 12px 24px;
+        padding: 0 24px 10px 24px;
+    }
+
+    .footer {
+        padding: 8px;
     }
 }
 
@@ -375,13 +383,31 @@ body {
     .insight-item, .suggestion-item {
         margin-bottom: 1px;
     }
+
+    .search-section {
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+    }
+
+    .bookmarks-section {
+        margin-bottom: 12px;
+    }
+
+    .ai-hub-section {
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+    }
+
+    .footer {
+        padding: 8px;
+    }
 }
 
 /* 搜索区域 */
 .search-section {
     text-align: center;
-    margin-bottom: 10px;
-    padding-bottom: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
     border-bottom: none;
 }
 
@@ -399,7 +425,7 @@ body {
     background: var(--bg-secondary);
     border-radius: 16px;
     box-shadow: var(--shadow-light);
-    border: none;
+    border: 1px solid var(--border-color);
     overflow: hidden;
     transition: all 0.2s ease;
     height: 60px;
@@ -408,7 +434,8 @@ body {
 
 .search-form:hover,
 .search-form:focus-within {
-    box-shadow: var(--shadow-medium);
+    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1), var(--shadow-medium);
+    border-color: var(--google-blue);
 }
 
 .search-engines {
@@ -531,7 +558,7 @@ body {
 
 /* 书签卡片区域 */
 .bookmarks-section {
-    margin-bottom: 8px;
+    margin-bottom: 20px;
 }
 
 .bookmarks-container {
@@ -677,8 +704,8 @@ body {
 
 /* AI中枢面板 */
 .ai-hub-section {
-    margin-bottom: 8px;
-    padding-bottom: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
     border-bottom: 1px solid var(--border-light);
     position: relative;
 }
@@ -761,9 +788,20 @@ body {
     box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
 }
 
+.status-error {
+    background: #EF4444;
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);
+}
+
 .status-active {
     background: #3B82F6;
     box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
+}
+
+.update-time {
+    min-width: 60px;
+    display: inline-block;
+    text-align: left;
 }
 
 .status-pending {
@@ -922,7 +960,7 @@ body {
 .ai-hub-header.content-header {
     background: transparent;
     border-radius: 0;
-    padding: 16px 24px 12px 24px;
+    padding: 20px 24px 16px 24px;
     margin-bottom: 0;
     border: none;
     border-bottom: 1px solid rgba(148, 163, 184, 0.04);
@@ -936,7 +974,7 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
-    padding: 0 24px 16px 24px;
+    padding: 0 24px 12px 24px;
 }
 
 .content-module {
@@ -959,7 +997,7 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 12px 20px 8px 20px;
+    padding: 14px 20px 10px 20px;
     background: transparent;
     border-bottom: none;
     position: relative;
@@ -1355,7 +1393,7 @@ body {
     background: rgba(var(--bg-secondary-rgb, 255, 255, 255), 0.85);
     backdrop-filter: blur(10px);
     border-top: 1px solid var(--border-color);
-    padding: 8px;
+    padding: 10px;
     text-align: center;
     margin-top: auto;
 }
@@ -1682,39 +1720,7 @@ select.setting-control option:hover {
     box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
 }
 
-/* 终极覆盖：彻底禁用input-group-wide内所有元素的焦点样式 */
-* .input-group-wide *:focus,
-* .input-group-wide .setting-control:focus,
-html body .input-group-wide .setting-control:focus,
-html body .input-group-wide input.setting-control:focus,
-#settings-modal .input-group-wide .setting-control:focus {
-    outline: none !important;
-    border-color: var(--border-color) !important;
-    border-top-color: var(--border-color) !important;
-    border-bottom-color: var(--border-color) !important;
-    border-left-color: var(--border-color) !important;
-    border-right-color: var(--border-color) !important;
-    border-right: none !important;
-    box-shadow: none !important;
-    background-color: var(--bg-primary) !important;
-}
-
-/* 终极暗色模式覆盖 */
-[data-theme="dark"] * .input-group-wide *:focus,
-[data-theme="dark"] * .input-group-wide .setting-control:focus,
-html body [data-theme="dark"] .input-group-wide .setting-control:focus,
-html body [data-theme="dark"] .input-group-wide input.setting-control:focus,
-#settings-modal [data-theme="dark"] .input-group-wide .setting-control:focus {
-    outline: none !important;
-    border-color: var(--border-light) !important;
-    border-top-color: var(--border-light) !important;
-    border-bottom-color: var(--border-light) !important;
-    border-left-color: var(--border-light) !important;
-    border-right-color: var(--border-light) !important;
-    border-right: none !important;
-    box-shadow: none !important;
-    background-color: var(--bg-tertiary) !important;
-}
+/* API密钥输入框现在使用标准结构，无需特殊覆盖 */
 
 /* 暗色模式文本对比度增强 */
 [data-theme="dark"] .setting-label small {
@@ -1742,26 +1748,7 @@ html body [data-theme="dark"] .input-group-wide input.setting-control:focus,
     width: auto;
 }
 
-.toggle-password {
-    background: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    border-left: none;
-    padding: 12px 14px;
-    border-radius: 0 8px 8px 0;
-    cursor: pointer;
-    color: var(--text-secondary);
-    transition: all 0.2s ease;
-    box-sizing: border-box;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.toggle-password:hover {
-    color: var(--google-blue);
-    background: rgba(66, 133, 244, 0.05);
-}
+/* toggle-password按钮已移除，不再使用 */
 
 /* 单选按钮组布局 */
 .radio-group {
@@ -1854,102 +1841,7 @@ html body [data-theme="dark"] .input-group-wide input.setting-control:focus,
     font-weight: 500;
 }
 
-/* 宽型输入组 */
-.input-group-wide {
-    display: flex;
-    align-items: stretch;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.input-group-wide .setting-control {
-    flex: 1;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-right: none;
-    width: auto;
-}
-
-/* 为整个input-group-wide添加焦点描边效果 */
-.input-group-wide:focus-within {
-    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-/* 简单的焦点效果：只有容器显示光晕 */
-.input-group-wide:focus-within {
-    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-/* 完全禁用输入框和按钮的焦点样式，保持原样 */
-.input-group-wide input.setting-control:focus {
-    outline: none !important;
-    border-color: var(--border-color) !important;
-    box-shadow: none !important;
-    border-right: none !important;
-}
-
-.input-group-wide .setting-control:focus {
-    outline: none !important;
-    border-color: var(--border-color) !important;
-    box-shadow: none !important;
-    border-right: none !important;
-}
-
-/* 按钮也保持原样 */
-.input-group-wide:focus-within .toggle-password {
-    border-color: var(--border-color) !important;
-    border-left: none !important;
-}
-
-/* 暗色模式下的简单焦点效果 */
-[data-theme="dark"] .input-group-wide:focus-within {
-    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
-}
-
-/* 暗色模式下也完全禁用内部焦点样式 */
-[data-theme="dark"] .input-group-wide input.setting-control:focus {
-    outline: none !important;
-    border-color: var(--border-light) !important;
-    box-shadow: none !important;
-    border-right: none !important;
-}
-
-[data-theme="dark"] .input-group-wide .setting-control:focus {
-    outline: none !important;
-    border-color: var(--border-light) !important;
-    box-shadow: none !important;
-    border-right: none !important;
-}
-
-[data-theme="dark"] .input-group-wide:focus-within .toggle-password {
-    border-color: var(--border-light) !important;
-    border-left: none !important;
-}
-
-.input-group-wide .toggle-password {
-    background: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    border-left: none;
-    padding: 12px 16px;
-    border-radius: 0 8px 8px 0;
-    cursor: pointer;
-    color: var(--text-secondary);
-    transition: all 0.2s ease;
-    box-sizing: border-box;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.input-group-wide .toggle-password:hover {
-    color: var(--google-blue);
-    background: rgba(66, 133, 244, 0.05);
-}
+/* API密钥输入框现在使用标准结构，已移除复杂的input-group-wide样式 */
 
 /* 紧凑型书签输入组（保留用于其他地方） */
 .bookmark-input-compact {
@@ -2455,10 +2347,7 @@ html body [data-theme="dark"] .input-group-wide input.setting-control:focus,
         min-width: auto;
     }
 
-    .input-group-wide .setting-control {
-        width: 100%;
-    }
-
+  
     .button-group-wide {
         flex-direction: column;
         gap: 12px;
@@ -2815,8 +2704,10 @@ html body [data-theme="dark"] .input-group-wide input.setting-control:focus,
     justify-content: center;
     transition: all 0.2s ease;
     font-size: 12px;
-    opacity: 0;
+    opacity: 0.7;
     margin-left: 8px;
+    z-index: 10;
+    position: relative;
 }
 
 .conversation-item:hover .delete-conversation {
