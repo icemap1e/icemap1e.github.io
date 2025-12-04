@@ -1836,6 +1836,32 @@ select.setting-control option:hover {
     width: auto;
 }
 
+/* 修复input-group-wide内输入框的焦点描边 */
+.input-group-wide .setting-control:focus {
+    outline: none;
+    border-color: var(--google-blue);
+    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+    border-right: none;
+}
+
+/* 暗色模式下的焦点描边 */
+[data-theme="dark"] .input-group-wide .setting-control:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+    border-right: none;
+}
+
+/* 为整个input-group-wide添加焦点描边效果 */
+.input-group-wide:focus-within {
+    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .input-group-wide:focus-within {
+    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+}
+
 .input-group-wide .toggle-password {
     background: var(--bg-primary);
     border: 1px solid var(--border-color);
