@@ -343,6 +343,11 @@
             background: rgba(255, 255, 255, 0.15);
         }
 
+        /* Unified card backdrop */
+        .backdrop-card {
+            backdrop-filter: blur(6px);
+        }
+
         .engine-option.active[data-engine="bing"] {
             border-color: #00a4ef;
             color: #00a4ef;
@@ -367,8 +372,98 @@
             background: rgba(255, 255, 255, 0.15);
         }
 
+        /* Quick Link Cards */
+        .quick-link {
+            backdrop-filter: blur(6px);
+        }
+
         .search-container:focus-within {
             border-color: #4285f4;
+        }
+
+        /* Search Suggestions */
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-top: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+        }
+
+        .search-suggestions.show {
+            display: block;
+        }
+
+        .suggestion-header {
+            padding: 10px 16px;
+            font-size: 12px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .clear-history {
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .clear-history:hover {
+            text-decoration: underline;
+        }
+
+        .suggestion-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.15s;
+        }
+
+        .suggestion-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .suggestion-item.selected {
+            background: var(--bg-hover);
+        }
+
+        .suggestion-icon {
+            width: 16px;
+            height: 16px;
+            opacity: 0.5;
+        }
+
+        .suggestion-text {
+            flex: 1;
+            font-size: 14px;
+            color: var(--text-primary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .suggestion-time {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .suggestion-empty {
+            padding: 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
         }
 
         .search-input {
@@ -435,6 +530,7 @@
             margin-left: auto;
             margin-right: auto;
             padding: 0 4px 12px 4px;
+            position: relative;
         }
 
         .quick-links-container {
@@ -449,6 +545,43 @@
             padding: 8px 4px 18px 4px;
             scroll-snap-type: x mandatory;
             scrollbar-gutter: stable;
+        }
+
+        /* Mobile scroll hint */
+        .scroll-hint {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 60px;
+            background: linear-gradient(to left, var(--bg-primary), transparent);
+            pointer-events: none;
+            align-items: center;
+            justify-content: center;
+            animation: scrollHint 2s ease-in-out infinite;
+        }
+
+        .scroll-hint::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid var(--text-muted);
+            border-bottom: 2px solid var(--text-muted);
+            transform: rotate(-45deg);
+            margin-right: 12px;
+        }
+
+        @keyframes scrollHint {
+            0%, 100% { opacity: 0.3; transform: translateY(-50%) translateX(0); }
+            50% { opacity: 1; transform: translateY(-50%) translateX(5px); }
+        }
+
+        @media (max-width: 600px) {
+            .scroll-hint {
+                display: flex;
+            }
         }
 
         /* Hide scrollbar by default */
@@ -944,11 +1077,22 @@
                 </button>
             </div>
             <div class="search-container">
-                <input type="text" class="search-input" id="searchInput" placeholder="搜索或输入网址" autofocus>
+                <input type="text" class="search-input" id="searchInput" placeholder="搜索或输入网址" autofocus autocomplete="off">
                 <div class="search-icons">
+                    <button class="search-icon-btn" id="clearSearch" title="清空" style="display: none;">
+                        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                    </button>
                     <button class="search-icon-btn" id="searchBtn" title="搜索">
                         <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
                     </button>
+                </div>
+                <!-- Search Suggestions -->
+                <div class="search-suggestions" id="searchSuggestions">
+                    <div class="suggestion-header">
+                        <span>搜索历史</span>
+                        <span class="clear-history" id="clearHistory">清空历史</span>
+                    </div>
+                    <div class="suggestion-list" id="suggestionList"></div>
                 </div>
             </div>
         </div>
@@ -978,7 +1122,8 @@
         </div>
 
             <div class="quick-links">
-                <div class="quick-links-container">
+                <div class="scroll-hint" id="scrollHint"></div>
+                <div class="quick-links-container" id="quickLinksContainer">
                     <a href="https://mail.qiye.163.com/static/login/" target="_blank" class="quick-link">
                         <svg class="icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
                         <span>企业邮箱</span>
@@ -1033,7 +1178,7 @@
     </button>
 
     <script>
-        // Random geometric shapes generator
+        // Random geometric shapes generator (optimized)
         function generateGeometricShapes() {
             const svg = document.getElementById('geoSvg');
             if (!svg) return;
@@ -1049,10 +1194,36 @@
                 // Generate 6-9 random shapes
                 const shapeCount = 6 + Math.floor(Math.random() * 4);
 
+                // Pre-inject unified keyframe animations
+                let existingStyle = document.getElementById('geo-keyframes');
+                if (!existingStyle) {
+                    const style = document.createElement('style');
+                    style.id = 'geo-keyframes';
+                    style.textContent = `
+                        @keyframes geoFloat1 {
+                            0%, 100% { transform: translate(-3%, -2%) scale(0.95); }
+                            50% { transform: translate(3%, 2%) scale(1.05); }
+                        }
+                        @keyframes geoFloat2 {
+                            0%, 100% { transform: translate(2%, -3%) scale(1.02); }
+                            50% { transform: translate(-2%, 3%) scale(0.98); }
+                        }
+                        @keyframes geoFloat3 {
+                            0%, 100% { transform: translate(-2%, 2%) scale(0.98); }
+                            50% { transform: translate(2%, -2%) scale(1.02); }
+                        }
+                        @keyframes geoFloat4 {
+                            0%, 100% { transform: translate(3%, 3%) scale(1.05); }
+                            50% { transform: translate(-3%, -3%) scale(0.95); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+
                 for (let i = 0; i < shapeCount; i++) {
-                    const shapeType = Math.floor(Math.random() * 3); // 0: circle, 1: rect, 2: ellipse
+                    const shapeType = Math.floor(Math.random() * 3);
                     const color = colors[Math.floor(Math.random() * colors.length)];
-                    const opacity = 0.25 + Math.random() * 0.25;
+                    const opacity = 0.3 + Math.random() * 0.2;
 
                     // Random position (avoiding center area)
                     let cx, cy;
@@ -1065,18 +1236,15 @@
                         cy = 100 + Math.random() * 880;
                     } while (Math.sqrt((cx - centerX) ** 2 + (cy - centerY) ** 2) < minDist);
 
-                    // Random size
                     const size = 100 + Math.random() * 150;
 
                     let element;
                     if (shapeType === 0) {
-                        // Circle
                         element = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                         element.setAttribute('cx', cx);
                         element.setAttribute('cy', cy);
                         element.setAttribute('r', size / 2);
                     } else if (shapeType === 1) {
-                        // Rounded rectangle
                         element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
                         element.setAttribute('x', cx - size / 2);
                         element.setAttribute('y', cy - size / 2);
@@ -1084,7 +1252,6 @@
                         element.setAttribute('height', size * (0.7 + Math.random() * 0.6));
                         element.setAttribute('rx', size * 0.2);
                     } else {
-                        // Ellipse
                         element = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
                         element.setAttribute('cx', cx);
                         element.setAttribute('cy', cy);
@@ -1096,40 +1263,13 @@
                     element.setAttribute('fill', color);
                     element.style.opacity = opacity;
 
-                    // Random animation parameters
-                    const duration = 15 + Math.random() * 20;
-                    const delay = Math.random() * 5;
-                    const moveX1 = (Math.random() - 0.5) * 6;
-                    const moveY1 = (Math.random() - 0.5) * 6;
-                    const moveX2 = (Math.random() - 0.5) * 6;
-                    const moveY2 = (Math.random() - 0.5) * 6;
-                    const scale1 = 0.95 + Math.random() * 0.1;
-                    const scale2 = 0.95 + Math.random() * 0.1;
-
-                    element.style.animation = `geoFloat ${duration}s ease-in-out ${delay}s infinite`;
+                    // Use pre-defined animations
+                    const animType = (i % 4) + 1;
+                    const duration = 18 + Math.random() * 12;
+                    const delay = Math.random() * 3;
+                    element.style.animation = `geoFloat${animType} ${duration}s ease-in-out ${delay}s infinite`;
 
                     svg.appendChild(element);
-
-                    // Inject keyframes for this specific element
-                    const styleId = `geo-keyframes-${i}`;
-                    let existingStyle = document.getElementById(styleId);
-                    if (existingStyle) existingStyle.remove();
-
-                    const style = document.createElement('style');
-                    style.id = styleId;
-                    style.textContent = `
-                        @keyframes geoFloat {
-                            0%, 100% {
-                                transform: translate(0, 0) scale(1);
-                                opacity: ${opacity * 0.8};
-                            }
-                            50% {
-                                transform: translate(${moveX1}%, ${moveY1}%) scale(${scale1});
-                                opacity: ${opacity * 1.2};
-                            }
-                        }
-                    `;
-                    document.head.appendChild(style);
                 }
             }
         }
@@ -1444,6 +1584,9 @@
             const QWEATHER_KEY = '362482f5b93749fd80282dba7cedb427';
             const weatherEl = document.getElementById('weather');
 
+            // Loading state
+            if (weatherEl) weatherEl.innerHTML = '<span class="loading-text">获取天气...</span>';
+
             try {
                 let locationId, locationName;
 
@@ -1462,13 +1605,28 @@
 
                 // If no valid cache, request geolocation
                 if (!locationId) {
-                    const position = await new Promise((resolve, reject) => {
-                        if (!navigator.geolocation) {
-                            reject(new Error('Geolocation not supported'));
-                            return;
+                    let position;
+                    try {
+                        position = await new Promise((resolve, reject) => {
+                            if (!navigator.geolocation) {
+                                reject(new Error('Geolocation not supported'));
+                                return;
+                            }
+                            navigator.geolocation.getCurrentPosition(resolve, reject, {
+                                timeout: 10000,
+                                enableHighAccuracy: false
+                            });
+                        });
+                    } catch (geoError) {
+                        // User denied or geolocation failed
+                        if (geoError.code === 1) {
+                            // Permission denied
+                            weatherEl.innerHTML = '<span class="weather-error" title="定位被拒绝，请在浏览器设置中允许定位">📍 未授权</span>';
+                        } else {
+                            throw geoError;
                         }
-                        navigator.geolocation.getCurrentPosition(resolve, reject);
-                    });
+                        return;
+                    }
 
                     const { latitude, longitude } = position.coords;
 
@@ -1509,7 +1667,8 @@
 
             } catch (e) {
                 console.error('Weather fetch error:', e);
-                weatherEl.textContent = `--°`;
+                // Show friendly error message
+                weatherEl.innerHTML = '<span class="weather-error" title="天气服务暂时不可用">🌤️ 服务异常</span>';
             }
         }
 
@@ -1530,15 +1689,96 @@
         };
 
         let currentEngine = 'google';
+        const MAX_HISTORY = 8;
+        let searchHistory = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+        let selectedSuggestionIndex = -1;
 
-        function performSearch() {
-            const q = document.getElementById('searchInput').value.trim();
+        function saveToHistory(query) {
+            if (!query.trim()) return;
+            // Remove if exists and add to front
+            searchHistory = searchHistory.filter(h => h.query !== query);
+            searchHistory.unshift({
+                query: query,
+                time: Date.now()
+            });
+            // Keep only MAX_HISTORY items
+            searchHistory = searchHistory.slice(0, MAX_HISTORY);
+            localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+        }
+
+        function renderSuggestions(filterText = '') {
+            const suggestionsEl = document.getElementById('searchSuggestions');
+            const listEl = document.getElementById('suggestionList');
+            const clearBtn = document.getElementById('clearHistory');
+
+            if (!suggestionsEl || !listEl) return;
+
+            let filtered = searchHistory;
+            if (filterText) {
+                filtered = searchHistory.filter(h =>
+                    h.query.toLowerCase().includes(filterText.toLowerCase())
+                );
+            }
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = '<div class="suggestion-empty">暂无搜索历史</div>';
+                clearBtn.style.display = 'none';
+            } else {
+                listEl.innerHTML = filtered.map((h, i) => {
+                    const time = formatTimeAgo(h.time);
+                    return `
+                        <div class="suggestion-item" data-index="${i}" data-query="${h.query}">
+                            <svg class="suggestion-icon" viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" fill="currentColor"/></svg>
+                            <span class="suggestion-text">${h.query}</span>
+                            <span class="suggestion-time">${time}</span>
+                        </div>
+                    `;
+                }).join('');
+                clearBtn.style.display = 'block';
+            }
+
+            suggestionsEl.classList.add('show');
+            selectedSuggestionIndex = -1;
+        }
+
+        function formatTimeAgo(timestamp) {
+            const diff = Date.now() - timestamp;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 1) return '刚刚';
+            if (minutes < 60) return `${minutes}分钟前`;
+            if (hours < 24) return `${hours}小时前`;
+            if (days < 7) return `${days}天前`;
+            return new Date(timestamp).toLocaleDateString('zh-CN');
+        }
+
+        function hideSuggestions() {
+            const suggestionsEl = document.getElementById('searchSuggestions');
+            if (suggestionsEl) suggestionsEl.classList.remove('show');
+            selectedSuggestionIndex = -1;
+        }
+
+        function performSearch(query = null) {
+            const q = query || document.getElementById('searchInput').value.trim();
             if (q) {
+                saveToHistory(q);
+                hideSuggestions();
                 const url = q.match(/^https?:\/\//) || q.match(/^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}/)
                     ? (q.match(/^https?:\/\//) ? q : `https://${q}`)
                     : `${SEARCH_ENGINES[currentEngine].url}${encodeURIComponent(q)}`;
                 window.open(url, '_blank');
                 document.getElementById('searchInput').value = '';
+                updateClearButton();
+            }
+        }
+
+        function updateClearButton() {
+            const input = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearSearch');
+            if (input && clearBtn) {
+                clearBtn.style.display = input.value ? 'flex' : 'none';
             }
         }
 
@@ -1551,15 +1791,106 @@
         }
 
         function setupEventListeners() {
-            // Search input
             const searchInput = document.getElementById('searchInput');
             const searchBtn = document.getElementById('searchBtn');
-            if (searchInput) searchInput.addEventListener('keypress', e => { if (e.key === 'Enter') performSearch(); });
-            if (searchBtn) searchBtn.addEventListener('click', performSearch);
+            const clearBtn = document.getElementById('clearSearch');
+            const suggestionsEl = document.getElementById('searchSuggestions');
+            const clearHistoryBtn = document.getElementById('clearHistory');
+
+            // Search input events
+            if (searchInput) {
+                searchInput.addEventListener('keypress', e => {
+                    if (e.key === 'Enter') {
+                        if (selectedSuggestionIndex >= 0) {
+                            const selected = document.querySelector('.suggestion-item.selected');
+                            if (selected) {
+                                performSearch(selected.dataset.query);
+                            } else {
+                                performSearch();
+                            }
+                        } else {
+                            performSearch();
+                        }
+                    }
+                });
+
+                searchInput.addEventListener('input', () => {
+                    updateClearButton();
+                    const value = searchInput.value.trim();
+                    if (value) {
+                        renderSuggestions(value);
+                    } else {
+                        hideSuggestions();
+                    }
+                });
+
+                searchInput.addEventListener('focus', () => {
+                    if (searchInput.value.trim() === '' && searchHistory.length > 0) {
+                        renderSuggestions();
+                    }
+                });
+
+                // Keyboard navigation
+                searchInput.addEventListener('keydown', e => {
+                    if (suggestionsEl && suggestionsEl.classList.contains('show')) {
+                        const items = document.querySelectorAll('.suggestion-item');
+
+                        if (e.key === 'ArrowDown') {
+                            e.preventDefault();
+                            selectedSuggestionIndex = Math.min(selectedSuggestionIndex + 1, items.length - 1);
+                            updateSelection(items);
+                        } else if (e.key === 'ArrowUp') {
+                            e.preventDefault();
+                            selectedSuggestionIndex = Math.max(selectedSuggestionIndex - 1, -1);
+                            updateSelection(items);
+                        } else if (e.key === 'Escape') {
+                            hideSuggestions();
+                        }
+                    }
+                });
+            }
+
+            // Clear button
+            if (clearBtn) {
+                clearBtn.addEventListener('click', () => {
+                    if (searchInput) {
+                        searchInput.value = '';
+                        updateClearButton();
+                        searchInput.focus();
+                    }
+                });
+            }
+
+            // Clear history button
+            if (clearHistoryBtn) {
+                clearHistoryBtn.addEventListener('click', () => {
+                    searchHistory = [];
+                    localStorage.removeItem('searchHistory');
+                    renderSuggestions();
+                });
+            }
+
+            // Suggestion click events
+            suggestionsEl?.addEventListener('click', e => {
+                const item = e.target.closest('.suggestion-item');
+                if (item) {
+                    performSearch(item.dataset.query);
+                }
+            });
+
+            // Search button
+            if (searchBtn) searchBtn.addEventListener('click', () => performSearch());
 
             // Engine selector
             document.querySelectorAll('.engine-option').forEach(btn => {
                 btn.addEventListener('click', () => switchEngine(btn.dataset.engine));
+            });
+
+            // Hide suggestions when clicking outside
+            document.addEventListener('click', e => {
+                if (searchInput && suggestionsEl && !searchInput.contains(e.target) && !suggestionsEl.contains(e.target)) {
+                    hideSuggestions();
+                }
             });
 
             // Global keyboard shortcuts
@@ -1573,6 +1904,25 @@
             // Theme toggle
             const themeToggle = document.getElementById('themeToggle');
             if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+
+            // Scroll hint - hide when scrolled
+            const container = document.getElementById('quickLinksContainer');
+            const scrollHint = document.getElementById('scrollHint');
+            if (container && scrollHint) {
+                container.addEventListener('scroll', () => {
+                    if (container.scrollLeft > 50) {
+                        scrollHint.style.opacity = '0';
+                    } else {
+                        scrollHint.style.opacity = '1';
+                    }
+                });
+            }
+        }
+
+        function updateSelection(items) {
+            items.forEach((item, index) => {
+                item.classList.toggle('selected', index === selectedSuggestionIndex);
+            });
         }
 
         init();
