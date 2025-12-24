@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的主页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-card: #1a1a1a;
+            --bg-hover: #2a2a2a;
+
+            --text-primary: #f0f0f0;
+            --text-secondary: #c8c8c8;
+            --text-muted: #8a8a8a;
+
+            --border: #404040;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+        }
+
+        /* Light Theme */
+        :root[data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --bg-card: #ffffff;
+            --bg-hover: #f0f0f0;
+
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --text-muted: #999999;
+
+            --border: #e0e0e0;
+            --accent: #4285f4;
+            --accent-hover: #3367d6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Dark mode - Starry sky */
+        :root:not([data-theme="light"]) .starry-bg {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        :root:not([data-theme="light"]) .starry-bg svg {
+            display: none;
+        }
+
+        :root:not([data-theme="light"]) .starry-bg {
+            background-image:
+                /* Large bright stars */
+                radial-gradient(4px 4px at 15% 25%, rgba(255, 255, 255, 1), transparent 4px),
+                radial-gradient(4px 4px at 85% 15%, rgba(255, 255, 255, 0.98), transparent 4px),
+                radial-gradient(4px 4px at 45% 75%, rgba(255, 255, 255, 1), transparent 4px),
+                radial-gradient(4px 4px at 75% 65%, rgba(255, 255, 255, 1), transparent 4px),
+                radial-gradient(4px 4px at 35% 45%, rgba(255, 255, 255, 0.96), transparent 4px),
+                radial-gradient(4px 4px at 55% 85%, rgba(255, 255, 255, 0.99), transparent 4px),
+                radial-gradient(4px 4px at 25% 5%, rgba(255, 255, 255, 0.97), transparent 4px),
+                radial-gradient(4px 4px at 95% 45%, rgba(255, 255, 255, 0.98), transparent 4px),
+                /* Medium stars */
+                radial-gradient(2.5px 2.5px at 25% 45%, rgba(255, 255, 255, 0.9), transparent 2.5px),
+                radial-gradient(2.5px 2.5px at 65% 35%, rgba(255, 255, 255, 0.88), transparent 2.5px),
+                radial-gradient(2.5px 2.5px at 35% 85%, rgba(255, 255, 255, 0.92), transparent 2.5px),
+                radial-gradient(2.5px 2.5px at 95% 55%, rgba(255, 255, 255, 0.9), transparent 2.5px),
+                radial-gradient(2.5px 2.5px at 55% 15%, rgba(255, 255, 255, 0.87), transparent 2.5px),
+                radial-gradient(2.5px 2.5px at 5% 75%, rgba(255, 255, 255, 0.91), transparent 2.5px),
+                radial-gradient(2.5px 2.5px at 75% 25%, rgba(255, 255, 255, 0.89), transparent 2.5px),
+                radial-gradient(2.5px 2.5px at 45% 95%, rgba(255, 255, 255, 0.9), transparent 2.5px),
+                /* Small stars */
+                radial-gradient(2px 2px at 10% 60%, rgba(255, 255, 255, 0.75), transparent 2px),
+                radial-gradient(2px 2px at 30% 20%, rgba(255, 255, 255, 0.7), transparent 2px),
+                radial-gradient(2px 2px at 50% 50%, rgba(255, 255, 255, 0.73), transparent 2px),
+                radial-gradient(2px 2px at 70% 90%, rgba(255, 255, 255, 0.77), transparent 2px),
+                radial-gradient(2px 2px at 90% 30%, rgba(255, 255, 255, 0.72), transparent 2px),
+                radial-gradient(2px 2px at 20% 80%, rgba(255, 255, 255, 0.75), transparent 2px),
+                radial-gradient(2px 2px at 40% 40%, rgba(255, 255, 255, 0.71), transparent 2px),
+                radial-gradient(2px 2px at 60% 70%, rgba(255, 255, 255, 0.76), transparent 2px),
+                radial-gradient(2px 2px at 80% 10%, rgba(255, 255, 255, 0.74), transparent 2px),
+                radial-gradient(2px 2px at 12% 35%, rgba(255, 255, 255, 0.78), transparent 2px),
+                radial-gradient(2px 2px at 38% 65%, rgba(255, 255, 255, 0.73), transparent 2px),
+                radial-gradient(2px 2px at 52% 95%, rgba(255, 255, 255, 0.75), transparent 2px),
+                radial-gradient(2px 2px at 78% 45%, rgba(255, 255, 255, 0.72), transparent 2px),
+                radial-gradient(2px 2px at 92% 85%, rgba(255, 255, 255, 0.77), transparent 2px),
+                radial-gradient(2px 2px at 22% 12%, rgba(255, 255, 255, 0.74), transparent 2px),
+                radial-gradient(2px 2px at 68% 52%, rgba(255, 255, 255, 0.76), transparent 2px),
+                radial-gradient(2px 2px at 42% 78%, rgba(255, 255, 255, 0.71), transparent 2px),
+                radial-gradient(2px 2px at 88% 38%, rgba(255, 255, 255, 0.75), transparent 2px),
+                radial-gradient(2px 2px at 8% 88%, rgba(255, 255, 255, 0.73), transparent 2px),
+                radial-gradient(2px 2px at 52% 28%, rgba(255, 255, 255, 0.76), transparent 2px),
+                radial-gradient(2px 2px at 82% 68%, rgba(255, 255, 255, 0.74), transparent 2px);
+            background-size: 50% 50%;
+            animation: rotate-stars 300s linear infinite;
+        }
+
+        @keyframes rotate-stars {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Light mode - Geometric shapes */
+        :root[data-theme="light"] .starry-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        :root[data-theme="light"] .starry-bg svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .geo-shape {
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 32px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 1;
+            background: var(--bg-primary);
+        }
+
+        .top-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .separator {
+            color: var(--text-muted);
+            opacity: 0.6;
+            margin: 0 4px;
+        }
+
+        #time {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-variant-numeric: tabular-nums;
+        }
+
+        #date {
+            color: var(--text-secondary);
+        }
+
+        #weather {
+            color: var(--text-secondary);
+        }
+
+        .work-countdown {
+            color: var(--text-secondary);
+        }
+
+        .work-countdown .highlight {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        /* Floating Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+        }
+
+        .theme-toggle svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: #4285f4;
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        /* Hide sun icon in dark mode, moon in light mode */
+        :root:not([data-theme="light"]) .theme-toggle .sun-icon,
+        :root[data-theme="light"] .theme-toggle .moon-icon {
+            display: none;
+        }
+
+        :root[data-theme="light"] .theme-toggle .sun-icon,
+        :root:not([data-theme="light"]) .theme-toggle .moon-icon {
+            display: block;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .icon-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .icon-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: #4285f4;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Welcome Message */
+        .welcome-message {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .welcome-message h1 {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        /* Search Section - HERO */
+        .search-hero {
+            width: 100%;
+            max-width: 1000px;
+            margin-bottom: 40px;
+        }
+
+        /* Search Engine Selector - Above search box */
+        .engine-selector {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .engine-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .engine-option svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .engine-option:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .engine-option.active {
+            background: rgba(26, 26, 26, 0.08);
+            border-color: #4285f4;
+            color: #4285f4;
+            backdrop-filter: blur(6px);
+        }
+
+        :root[data-theme="light"] .engine-option.active {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .engine-option.active[data-engine="bing"] {
+            border-color: #00a4ef;
+            color: #00a4ef;
+        }
+
+        .engine-option.active[data-engine="baidu"] {
+            border-color: #2932e1;
+            color: #2932e1;
+        }
+
+        /* Search Container */
+        .search-container {
+            position: relative;
+            border-radius: 16px;
+            background: rgba(26, 26, 26, 0.08);
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+            backdrop-filter: blur(6px);
+        }
+
+        :root[data-theme="light"] .search-container {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .search-container:focus-within {
+            border-color: #4285f4;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 18px 70px 18px 20px;
+            background: transparent;
+            border: none;
+            border-radius: 16px;
+            font-size: 17px;
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icons {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .search-icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .search-icon-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .search-icon-btn:hover {
+            background: var(--bg-hover);
+            color: #4285f4;
+        }
+
+        /* Icon styles */
+        .icon {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        /* Quick Links Under Search */
+        .quick-links {
+            width: 100%;
+            max-width: 994px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 4px 12px 4px;
+        }
+
+        .quick-links-container {
+            display: grid;
+            grid-auto-columns: 120px;
+            grid-auto-flow: column;
+            gap: 20px;
+            overflow-x: auto;
+            overflow-y: visible;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            padding: 8px 4px 18px 4px;
+            scroll-snap-type: x mandatory;
+            scrollbar-gutter: stable;
+        }
+
+        /* Hide scrollbar by default */
+        .quick-links-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .quick-links-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .quick-links-container::-webkit-scrollbar-thumb {
+            background: transparent;
+            border-radius: 3px;
+            transition: background 0.2s;
+        }
+
+        /* Show scrollbar on hover */
+        .quick-links-container:hover::-webkit-scrollbar-thumb {
+            background: var(--border);
+        }
+
+        .quick-links-container:hover::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Firefox */
+        .quick-links-container {
+            scrollbar-width: thin;
+            scrollbar-color: transparent transparent;
+        }
+
+        .quick-links-container:hover {
+            scrollbar-color: var(--border) transparent;
+        }
+
+        .quick-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 120px;
+            height: 120px;
+            background: rgba(26, 26, 26, 0.08);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+            scroll-snap-align: start;
+            backdrop-filter: blur(6px);
+        }
+
+        :root[data-theme="light"] .quick-link {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .quick-link .icon {
+            width: 34px;
+            height: 34px;
+            fill: currentColor;
+        }
+
+        .quick-link:hover {
+            background: var(--bg-hover);
+            border-color: #4285f4;
+            color: var(--text-primary);
+            transform: translateY(-3px);
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .dash-card {
+            background: rgba(26, 26, 26, 0.08);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.2s;
+            backdrop-filter: blur(6px);
+        }
+
+        :root[data-theme="light"] .dash-card {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .dash-card:hover {
+            border-color: #4285f4;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: var(--bg-hover);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--text-secondary);
+        }
+
+        .card-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+        /* Stats */
+        .stats-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .stat-item {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Task List */
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.15s;
+        }
+
+        .task-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .task-check {
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--text-muted);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .task-text {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Info Items */
+        .info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 16px;
+            font-size: 12px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
+            background: var(--bg-primary);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-top-color: #4285f4;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .search-hero {
+                max-width: 700px;
+            }
+
+            .quick-links {
+                max-width: 700px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .top-bar {
+                flex-direction: column;
+                gap: 8px;
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+
+            .top-left {
+                flex-wrap: wrap;
+                gap: 6px 8px;
+                justify-content: center;
+            }
+
+            .separator {
+                display: none;
+            }
+
+            .work-countdown {
+                width: 100%;
+                text-align: center;
+            }
+
+            .search-hero {
+                max-width: 100%;
+                margin-bottom: 50px;
+            }
+
+            .welcome-message {
+                margin-bottom: 24px;
+            }
+
+            .welcome-message h1 {
+                font-size: 24px;
+            }
+
+            .engine-selector {
+                gap: 6px;
+            }
+
+            .engine-option {
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+
+            .engine-option svg {
+                width: 16px;
+                height: 16px;
+            }
+
+            .search-input {
+                padding: 16px 60px 16px 16px;
+                font-size: 16px;
+            }
+
+            .search-icon-btn {
+                width: 36px;
+                height: 36px;
+            }
+
+            .search-icon-btn svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .quick-links {
+                max-width: 100%;
+            }
+
+            .quick-links-container {
+                gap: 12px;
+                padding: 6px;
+            }
+
+            .quick-link {
+                width: 76px;
+                height: 76px;
+                font-size: 10px;
+            }
+
+            .quick-link .icon {
+                width: 22px;
+                height: 22px;
+            }
+        }
+
+        /* Notion Quick Links */
+        .notion-links {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 994px;
+            margin: 0 auto 36px auto;
+            padding: 20px 0;
+        }
+
+        .notion-links::before,
+        .notion-links::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border), transparent);
+        }
+
+        .notion-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-radius: 12px;
+            border: 1px solid transparent;
+        }
+
+        .notion-link:hover {
+            color: var(--text-primary);
+            background: rgba(26, 26, 26, 0.7);
+            border-color: #4285f4;
+            transform: translateY(-2px);
+            backdrop-filter: blur(8px);
+        }
+
+        :root[data-theme="light"] .notion-link:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .notion-link svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            transition: all 0.2s;
+            opacity: 0.7;
+        }
+
+        .notion-link:hover svg {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        .notion-link-main {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .notion-link-main svg {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Starry Background -->
+    <div class="starry-bg">
+        <svg id="geoSvg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice"></svg>
+    </div>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-left">
+            <span id="time">--:--</span>
+            <span class="separator">|</span>
+            <span id="date">加载中...</span>
+            <span class="separator">|</span>
+            <span id="weather" class="weather">定位中...</span>
+            <span class="separator">|</span>
+            <span id="workCountdown" class="work-countdown">加载中...</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Welcome Message -->
+        <div class="welcome-message">
+            <h1 id="greeting">你好</h1>
+        </div>
+
+        <!-- Search Hero -->
+        <div class="search-hero">
+            <div class="engine-selector" id="engineSelector">
+                <button class="engine-option active" data-engine="google">
+                    <svg viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M12 4c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm0-10c2.21 0 4 1.79 4 4h-2c0-1.1-.9-2-2-2s-2 .9-2 2h-2c0-2.21 1.79-4 4-4z"/>
+                    </svg>
+                    <span>Google</span>
+                </button>
+                <button class="engine-option" data-engine="bing">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="5" y="5" width="6" height="6" rx="1" fill="currentColor"/>
+                        <rect x="13" y="5" width="6" height="6" rx="1" fill="currentColor"/>
+                        <rect x="5" y="13" width="6" height="6" rx="1" fill="currentColor"/>
+                        <rect x="13" y="13" width="6" height="6" rx="1" fill="currentColor"/>
+                    </svg>
+                    <span>Bing</span>
+                </button>
+                <button class="engine-option" data-engine="baidu">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="8" cy="8" r="3" fill="currentColor"/>
+                        <circle cx="16" cy="8" r="3" fill="currentColor"/>
+                        <circle cx="8" cy="16" r="3" fill="currentColor"/>
+                        <circle cx="16" cy="16" r="3" fill="currentColor"/>
+                    </svg>
+                    <span>百度</span>
+                </button>
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="搜索或输入网址" autofocus>
+                <div class="search-icons">
+                    <button class="search-icon-btn" id="searchBtn" title="搜索">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notion Quick Links -->
+        <div class="notion-links">
+            <a href="notion://" class="notion-link notion-link-main">
+                <svg viewBox="0 0 24 24"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>
+                Notion
+            </a>
+            <a href="https://www.notion.so/A01-64584211a9364743a4530c3edd24292e?pvs=21" target="_blank" class="notion-link">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                收集箱
+            </a>
+            <a href="https://www.notion.so/A02-75ed3e011173435394c946bbcfbcc3d8?pvs=21" target="_blank" class="notion-link">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                碎片池
+            </a>
+            <a href="https://www.notion.so/B01-e10f090ec3f646e8b9c6e67decafbd3d?pvs=21" target="_blank" class="notion-link">
+                <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+                工作日志
+            </a>
+            <a href="https://www.notion.so/B03-3c66c113d7e244b8a40d919da2e2571f?pvs=21" target="_blank" class="notion-link">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                任务列表
+            </a>
+        </div>
+
+            <div class="quick-links">
+                <div class="quick-links-container">
+                    <a href="https://mail.qiye.163.com/static/login/" target="_blank" class="quick-link">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                        <span>企业邮箱</span>
+                    </a>
+                    <a href="https://chat.openai.com" target="_blank" class="quick-link">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                        <span>ChatGPT</span>
+                    </a>
+                    <a href="https://github.com" target="_blank" class="quick-link">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 7.01 9.54.5.09.68-.22.68-.48v-1.71c-2.78.6-3.37-1.34-3.37-1.34-.45-1.15-1.11-1.46-1.11-1.46-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.75c0 .27.18.58.69.48C19.13 20.16 22 16.42 22 12c0-5.52-4.48-10-10-10z"/></svg>
+                        <span>GitHub</span>
+                    </a>
+                    <a href="https://www.v2ex.com" target="_blank" class="quick-link">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>V2EX</span>
+                    </a>
+                    <a href="https://fanyi.baidu.com/" target="_blank" class="quick-link">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19h5l3.6-7.59L12 14l1.8-3.59L17.5 19h5l-7.63-6.93z"/></svg>
+                        <span>百度翻译</span>
+                    </a>
+                    <a href="https://momoyu.cc/" target="_blank" class="quick-link">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2v-6.09L12 3zm5 11.88l-1 .55V17h-2v-1.57l-1-.55L6.3 12l7.7-4.2 7.7 4.2-2.7 1.48z"/></svg>
+                        <span>在线学习</span>
+                    </a>
+                    <a href="https://www.zhihu.com" target="_blank" class="quick-link">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15c0 1.65-1.35 3-3 3s-3-1.35-3-3c0-1.5.45-2.1 1.17-2.17l-.9-.92C11.33 10.45 10.5 9 10.5 7.5c0-2.48 2.02-4.5 4.5-4.5s4.5 2.02 4.5 4.5c0 1.5-.83 2.95-1.93 4.75z"/></svg>
+                        <span>知乎</span>
+                    </a>
+                    <a href="https://www.bilibili.com" target="_blank" class="quick-link">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        <span>哔哩哔哩</span>
+                    </a>
+                    <a href="https://www.youtube.com/" target="_blank" class="quick-link">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                        <span>YouTube</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2025 – 2026 你想堆个雪人吗 &nbsp;|&nbsp; Last update: 2025-12-24 &nbsp;|&nbsp; Powered by Claude, Notion & Web Tech</p>
+    </footer>
+
+    <!-- Floating Theme Toggle -->
+    <button class="theme-toggle" id="themeToggle" title="切换主题">
+        <svg class="moon-icon" viewBox="0 0 24 24"><path d="M17.01 11L21 15l-3.99 4v-3H10v-2h7.01v-3zM6.99 9l3.99-4v3H14v2h-7.01v3l-3.99-4z"/></svg>
+        <svg class="sun-icon" viewBox="0 0 24 24"><path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg>
+    </button>
+
+    <script>
+        // Random geometric shapes generator
+        function generateGeometricShapes() {
+            const svg = document.getElementById('geoSvg');
+            if (!svg) return;
+
+            // Check if light theme
+            if (document.documentElement.getAttribute('data-theme') === 'light') {
+                // Clear existing shapes
+                svg.innerHTML = '';
+
+                // Morandi colors
+                const colors = ['#E8D5D0', '#D4E2E8', '#E5D5E8', '#D5E8DB', '#E8E5D5', '#D5DEE8', '#E0D5E0', '#D5E0E5'];
+
+                // Generate 6-9 random shapes
+                const shapeCount = 6 + Math.floor(Math.random() * 4);
+
+                for (let i = 0; i < shapeCount; i++) {
+                    const shapeType = Math.floor(Math.random() * 3); // 0: circle, 1: rect, 2: ellipse
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    const opacity = 0.25 + Math.random() * 0.25;
+
+                    // Random position (avoiding center area)
+                    let cx, cy;
+                    const centerX = 960;
+                    const centerY = 540;
+                    const minDist = 200;
+
+                    do {
+                        cx = 100 + Math.random() * 1720;
+                        cy = 100 + Math.random() * 880;
+                    } while (Math.sqrt((cx - centerX) ** 2 + (cy - centerY) ** 2) < minDist);
+
+                    // Random size
+                    const size = 100 + Math.random() * 150;
+
+                    let element;
+                    if (shapeType === 0) {
+                        // Circle
+                        element = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                        element.setAttribute('cx', cx);
+                        element.setAttribute('cy', cy);
+                        element.setAttribute('r', size / 2);
+                    } else if (shapeType === 1) {
+                        // Rounded rectangle
+                        element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                        element.setAttribute('x', cx - size / 2);
+                        element.setAttribute('y', cy - size / 2);
+                        element.setAttribute('width', size);
+                        element.setAttribute('height', size * (0.7 + Math.random() * 0.6));
+                        element.setAttribute('rx', size * 0.2);
+                    } else {
+                        // Ellipse
+                        element = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+                        element.setAttribute('cx', cx);
+                        element.setAttribute('cy', cy);
+                        element.setAttribute('rx', size / 2);
+                        element.setAttribute('ry', size / 2 * (0.5 + Math.random() * 0.5));
+                    }
+
+                    element.classList.add('geo-shape');
+                    element.setAttribute('fill', color);
+                    element.style.opacity = opacity;
+
+                    // Random animation parameters
+                    const duration = 15 + Math.random() * 20;
+                    const delay = Math.random() * 5;
+                    const moveX1 = (Math.random() - 0.5) * 6;
+                    const moveY1 = (Math.random() - 0.5) * 6;
+                    const moveX2 = (Math.random() - 0.5) * 6;
+                    const moveY2 = (Math.random() - 0.5) * 6;
+                    const scale1 = 0.95 + Math.random() * 0.1;
+                    const scale2 = 0.95 + Math.random() * 0.1;
+
+                    element.style.animation = `geoFloat ${duration}s ease-in-out ${delay}s infinite`;
+
+                    svg.appendChild(element);
+
+                    // Inject keyframes for this specific element
+                    const styleId = `geo-keyframes-${i}`;
+                    let existingStyle = document.getElementById(styleId);
+                    if (existingStyle) existingStyle.remove();
+
+                    const style = document.createElement('style');
+                    style.id = styleId;
+                    style.textContent = `
+                        @keyframes geoFloat {
+                            0%, 100% {
+                                transform: translate(0, 0) scale(1);
+                                opacity: ${opacity * 0.8};
+                            }
+                            50% {
+                                transform: translate(${moveX1}%, ${moveY1}%) scale(${scale1});
+                                opacity: ${opacity * 1.2};
+                            }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }
+        }
+
+        function init() {
+            console.log('Initializing...');
+
+            try {
+                initTheme();
+            } catch (e) {
+                console.error('Theme init error:', e);
+            }
+
+            // Setup event listeners FIRST - this is critical
+            try {
+                setupEventListeners();
+                console.log('Event listeners set up successfully');
+            } catch (e) {
+                console.error('Error setting up event listeners:', e);
+            }
+
+            // Update time
+            try {
+                updateTime();
+                setInterval(updateTime, 1000);
+            } catch (e) {
+                console.error('Time update error:', e);
+            }
+
+            // These can run asynchronously
+            setTimeout(() => {
+                fetchWeather().catch(e => console.error('Weather error:', e));
+            }, 100);
+
+            console.log('Init complete');
+        }
+
+        // Theme Management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+            // Default is dark mode (no attribute needed)
+
+            // Generate geometric shapes after theme is set
+            setTimeout(() => generateGeometricShapes(), 100);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+
+            // Regenerate shapes when switching to light mode
+            if (newTheme === 'light') {
+                setTimeout(() => generateGeometricShapes(), 100);
+            } else {
+                // Clear shapes in dark mode
+                const svg = document.getElementById('geoSvg');
+                if (svg) svg.innerHTML = '';
+            }
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const days = ['日', '一', '二', '三', '四', '五', '六'];
+            const months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+
+            const timeEl = document.getElementById('time');
+            const dateEl = document.getElementById('date');
+
+            if (timeEl) timeEl.textContent = `${hours}:${minutes}`;
+            if (dateEl) dateEl.textContent = `周${days[now.getDay()]} · ${months[now.getMonth()]} 月 ${now.getDate()} 日`;
+
+            // Update greeting message
+            updateGreeting(now.getHours());
+
+            // Update work countdown
+            updateWorkCountdown(now);
+        }
+
+        // Update greeting based on time of day
+        function updateGreeting(hour) {
+            const greetingEl = document.getElementById('greeting');
+            if (!greetingEl) return;
+
+            const currentHours = hour;
+            const currentTimeInMinutes = currentHours * 60;
+
+            // Work schedule
+            const morningStart = 8 * 60;
+            const morningEnd = 11 * 60 + 20;
+            const afternoonStart = 13 * 60 + 30;
+            const afternoonEnd = 17 * 60;
+
+            // Get current period key
+            let periodKey;
+            if (currentTimeInMinutes < morningStart) {
+                periodKey = hour < 6 ? 'night' : (hour < 7 ? 'early_morning' : 'morning_prep');
+            } else if (currentTimeInMinutes >= morningStart && currentTimeInMinutes < morningEnd) {
+                periodKey = 'work_morning';
+            } else if (currentTimeInMinutes >= morningEnd && currentTimeInMinutes < afternoonStart) {
+                periodKey = 'lunch';
+            } else if (currentTimeInMinutes >= afternoonStart && currentTimeInMinutes < afternoonEnd) {
+                periodKey = hour < 15 ? 'work_afternoon_early' : (hour < 16 ? 'work_afternoon_mid' : 'work_afternoon_late');
+            } else if (currentTimeInMinutes >= afternoonEnd && currentTimeInMinutes < afternoonEnd + 30) {
+                periodKey = 'just_off_work';
+            } else if (hour >= 18 && hour < 23) {
+                periodKey = hour < 20 ? 'evening_early' : (hour < 22 ? 'evening_late' : 'night_rest');
+            } else {
+                periodKey = 'late_night';
+            }
+
+            // Check if we need to update (period changed or first visit)
+            const cachedPeriod = localStorage.getItem('greetingPeriod');
+            const cachedGreeting = localStorage.getItem('greetingText');
+
+            // If same period and has cached greeting, use it
+            if (cachedPeriod === periodKey && cachedGreeting) {
+                greetingEl.textContent = cachedGreeting;
+                return;
+            }
+
+            // Define greetings for each period
+            const greetingSets = {
+                'night': [
+                    '夜深了，注意休息',
+                    '还不睡吗',
+                    '熬夜对身体不好',
+                    '早点休息吧',
+                    '晚安世界'
+                ],
+                'early_morning': [
+                    '早安新的一天',
+                    '美好的一天开始',
+                    '又是新的开始',
+                    '元气满满的一天',
+                    '起床奋斗啦'
+                ],
+                'morning_prep': [
+                    '准备出发了吗',
+                    '吃过早餐了吗',
+                    '新的一天加油',
+                    '今天也要努力',
+                    '准备迎接挑战'
+                ],
+                'work_morning': [
+                    '上午加油',
+                    '专注工作',
+                    '保持专注',
+                    '今天要努力',
+                    '上午状态满'
+                ],
+                'lunch': [
+                    '午休时间到',
+                    '放松一下',
+                    '中午休息会儿',
+                    '充电时间',
+                    '享受午休'
+                ],
+                'work_afternoon_early': [
+                    '下午继续',
+                    '下午开工',
+                    '保持节奏',
+                    '下午冲刺',
+                    '继续努力'
+                ],
+                'work_afternoon_mid': [
+                    '坚持一下',
+                    '快了快了',
+                    '再坚持会儿',
+                    '胜利在望',
+                    '加把劲'
+                ],
+                'work_afternoon_late': [
+                    '快要下班了',
+                    '胜利在望',
+                    '最后冲刺',
+                    '马上自由',
+                    '倒计时中'
+                ],
+                'just_off_work': [
+                    '下班啦',
+                    '终于下班',
+                    '自由时间',
+                    '下班快乐',
+                    '辛苦一天了'
+                ],
+                'evening_early': [
+                    '晚上好',
+                    '晚上轻松',
+                    '晚间时光',
+                    '放松时刻',
+                    '晚上愉快'
+                ],
+                'evening_late': [
+                    '夜生活开始',
+                    '晚上干什么',
+                    '享受夜晚',
+                    '夜晚模式',
+                    '夜猫子时间'
+                ],
+                'night_rest': [
+                    '该休息了',
+                    '早点睡吧',
+                    '准备睡觉',
+                    '夜深了',
+                    '晚安'
+                ],
+                'late_night': [
+                    '夜深了',
+                    '还在熬夜',
+                    '注意身体',
+                    '很晚了',
+                    '休息吧'
+                ]
+            };
+
+            // Get greetings for current period
+            const greetings = greetingSets[periodKey] || greetingSets['late_night'];
+
+            // Use date + period as seed for consistent selection
+            const today = new Date().toDateString();
+            const seed = today + '-' + periodKey;
+            let hash = 0;
+            for (let i = 0; i < seed.length; i++) {
+                hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+                hash = hash & hash;
+            }
+
+            // Select greeting based on hash (same for today's period)
+            const index = Math.abs(hash) % greetings.length;
+            const greeting = greetings[index];
+
+            // Update display
+            greetingEl.textContent = greeting;
+
+            // Cache it
+            localStorage.setItem('greetingPeriod', periodKey);
+            localStorage.setItem('greetingText', greeting);
+        }
+
+        // Work countdown
+        function updateWorkCountdown(now) {
+            const currentHours = now.getHours();
+            const currentMinutes = now.getMinutes();
+            const currentTimeInMinutes = currentHours * 60 + currentMinutes;
+
+            // Work schedule (in minutes from midnight)
+            const morningStart = 8 * 60;      // 8:00
+            const morningEnd = 11 * 60 + 20;   // 11:20
+            const afternoonStart = 13 * 60 + 30; // 13:30
+            const afternoonEnd = 17 * 60;      // 17:00
+
+            let targetTime, label;
+
+            if (currentTimeInMinutes < morningStart) {
+                // Before morning work: countdown to work start
+                targetTime = morningStart;
+                label = '上班';
+            } else if (currentTimeInMinutes >= morningStart && currentTimeInMinutes < morningEnd) {
+                // Morning work: countdown to morning end
+                targetTime = morningEnd;
+                label = '午休';
+            } else if (currentTimeInMinutes >= morningEnd && currentTimeInMinutes < afternoonStart) {
+                // Lunch break: countdown to afternoon work
+                targetTime = afternoonStart;
+                label = '下午上班';
+            } else if (currentTimeInMinutes >= afternoonStart && currentTimeInMinutes < afternoonEnd) {
+                // Afternoon work: countdown to end of work
+                targetTime = afternoonEnd;
+                label = '下班';
+            } else {
+                // After work: countdown to tomorrow morning work
+                targetTime = morningStart + 24 * 60; // Tomorrow 8:00 in minutes
+                label = '明天上班';
+            }
+
+            const diffMinutes = targetTime - currentTimeInMinutes;
+
+            // Format time difference
+            if (diffMinutes <= 0) {
+                const countdownEl = document.getElementById('workCountdown');
+                if (countdownEl) countdownEl.textContent = `还有 ${label}`;
+                return;
+            }
+
+            const hours = Math.floor(diffMinutes / 60);
+            const minutes = diffMinutes % 60;
+
+            let timeStr;
+            if (hours > 0 && minutes > 0) {
+                timeStr = `${hours} 小时 ${minutes} 分钟`;
+            } else if (hours > 0) {
+                timeStr = `${hours} 小时`;
+            } else {
+                timeStr = `${minutes} 分钟`;
+            }
+
+            const countdownEl = document.getElementById('workCountdown');
+            if (countdownEl) countdownEl.innerHTML = `还有 <span class="highlight">${timeStr}</span> ${label}`;
+        }
+
+        // Location cache duration: 24 hours
+        const LOCATION_CACHE_DURATION = 24 * 60 * 60 * 1000;
+
+        async function fetchWeather() {
+            const QWEATHER_KEY = '362482f5b93749fd80282dba7cedb427';
+            const weatherEl = document.getElementById('weather');
+
+            try {
+                let locationId, locationName;
+
+                // Check cached location
+                const cachedLocation = localStorage.getItem('weatherLocation');
+                if (cachedLocation) {
+                    const { id, name, timestamp } = JSON.parse(cachedLocation);
+                    const cacheAge = Date.now() - timestamp;
+
+                    // Use cached location if still valid (within 24 hours)
+                    if (cacheAge < LOCATION_CACHE_DURATION) {
+                        locationId = id;
+                        locationName = name;
+                    }
+                }
+
+                // If no valid cache, request geolocation
+                if (!locationId) {
+                    const position = await new Promise((resolve, reject) => {
+                        if (!navigator.geolocation) {
+                            reject(new Error('Geolocation not supported'));
+                            return;
+                        }
+                        navigator.geolocation.getCurrentPosition(resolve, reject);
+                    });
+
+                    const { latitude, longitude } = position.coords;
+
+                    // Get location ID from coordinates (city lookup)
+                    const geoRes = await fetch(`https://geoapi.qweather.com/v2/city/lookup?location=${longitude},${latitude}&key=${QWEATHER_KEY}`);
+                    if (!geoRes.ok) throw new Error('Geo lookup failed');
+                    const geoData = await geoRes.json();
+
+                    if (geoData.code !== '200' || !geoData.location || geoData.location.length === 0) {
+                        throw new Error('Location not found');
+                    }
+
+                    locationId = geoData.location[0].id;
+                    locationName = geoData.location[0].name;
+
+                    // Cache the location
+                    localStorage.setItem('weatherLocation', JSON.stringify({
+                        id: locationId,
+                        name: locationName,
+                        timestamp: Date.now()
+                    }));
+                }
+
+                // Get current weather
+                const weatherRes = await fetch(`https://devapi.qweather.com/v7/weather/now?location=${locationId}&key=${QWEATHER_KEY}`);
+                if (!weatherRes.ok) throw new Error('Weather fetch failed');
+                const weatherData = await weatherRes.json();
+
+                if (weatherData.code !== '200' || !weatherData.now) {
+                    throw new Error('Weather data invalid');
+                }
+
+                const now = weatherData.now;
+                const temp = now.temp;
+                const text = now.text;
+
+                weatherEl.textContent = `${locationName} ${text} ${temp}°`;
+
+            } catch (e) {
+                console.error('Weather fetch error:', e);
+                weatherEl.textContent = `--°`;
+            }
+        }
+
+        // Search engines configuration
+        const SEARCH_ENGINES = {
+            google: {
+                url: 'https://www.google.com/search?q=',
+                placeholder: '搜索或输入网址'
+            },
+            bing: {
+                url: 'https://www.bing.com/search?q=',
+                placeholder: '在 Bing 搜索'
+            },
+            baidu: {
+                url: 'https://www.baidu.com/s?wd=',
+                placeholder: '在百度搜索'
+            }
+        };
+
+        let currentEngine = 'google';
+
+        function performSearch() {
+            const q = document.getElementById('searchInput').value.trim();
+            if (q) {
+                const url = q.match(/^https?:\/\//) || q.match(/^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}/)
+                    ? (q.match(/^https?:\/\//) ? q : `https://${q}`)
+                    : `${SEARCH_ENGINES[currentEngine].url}${encodeURIComponent(q)}`;
+                window.open(url, '_blank');
+                document.getElementById('searchInput').value = '';
+            }
+        }
+
+        function switchEngine(engine) {
+            currentEngine = engine;
+            document.querySelectorAll('.engine-option').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.engine === engine);
+            });
+            document.getElementById('searchInput').placeholder = SEARCH_ENGINES[engine].placeholder;
+        }
+
+        function setupEventListeners() {
+            // Search input
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            if (searchInput) searchInput.addEventListener('keypress', e => { if (e.key === 'Enter') performSearch(); });
+            if (searchBtn) searchBtn.addEventListener('click', performSearch);
+
+            // Engine selector
+            document.querySelectorAll('.engine-option').forEach(btn => {
+                btn.addEventListener('click', () => switchEngine(btn.dataset.engine));
+            });
+
+            // Global keyboard shortcuts
+            document.addEventListener('keydown', e => {
+                if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                    e.preventDefault();
+                    if (searchInput) searchInput.focus();
+                }
+            });
+
+            // Theme toggle
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+        }
+
+        init();
+    </script>
+</body>
+</html>
