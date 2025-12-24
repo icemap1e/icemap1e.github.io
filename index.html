@@ -17,44 +17,78 @@
             --bg-card: #1a1a1a;
             --bg-hover: #2a2a2a;
 
-            --text-primary: #f0f0f0;
-            --text-secondary: #c8c8c8;
-            --text-muted: #8a8a8a;
+            --text-primary: #ffffff;
+            --text-secondary: #eeeeee;
+            --text-muted: #bbbbbb;
 
-            --border: #404040;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
+            --border: #5a5a5a;
+            --accent: #4285f4;
+            --accent-hover: #3367d6;
+
+            /* Card backdrop for dark mode */
+            --card-backdrop: rgba(26, 26, 26, 0.75);
         }
 
         /* Light Theme */
         :root[data-theme="light"] {
-            --bg-primary: #ffffff;
+            --bg-primary: #F6F7F9;
             --bg-secondary: #f5f5f5;
             --bg-card: #ffffff;
             --bg-hover: #f0f0f0;
 
-            --text-primary: #1a1a1a;
-            --text-secondary: #666666;
-            --text-muted: #999999;
+            --text-primary: #000000;
+            --text-secondary: #4a4a4a;
+            --text-muted: #888888;
 
-            --border: #e0e0e0;
+            --border: #d0d0d0;
             --accent: #4285f4;
             --accent-hover: #3367d6;
+
+            /* Card backdrop for light mode */
+            --card-backdrop: rgba(255, 255, 255, 0.5);
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-primary);
+            background: transparent;
             color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             position: relative;
             overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Dark mode - Starry sky */
-        :root:not([data-theme="light"]) .starry-bg {
+        /* Background layer for light mode */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            z-index: -1;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Background color for top bar and footer */
+        .top-bar {
+            background: var(--bg-primary);
+        }
+
+        /* Background for main content area (between top bar and footer) */
+        .main-content {
+            background: transparent;
+        }
+
+        /* ========================================
+           Dynamic Background - Starry Sky Style
+           Random blocks with appearance/disappearance
+           ======================================== */
+
+        .starry-bg {
             position: fixed;
             top: -50%;
             left: -50%;
@@ -64,54 +98,103 @@
             z-index: 0;
         }
 
-        :root:not([data-theme="light"]) .starry-bg svg {
+        /* Star layer 1 */
+        .starry-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 8% 12%, rgba(255, 255, 255, 0.60), transparent 2px),
+                radial-gradient(2px 2px at 23% 34%, rgba(255, 255, 255, 0.70), transparent 2px),
+                radial-gradient(2px 2px at 37% 18%, rgba(255, 255, 255, 0.55), transparent 2px),
+                radial-gradient(2px 2px at 51% 42%, rgba(255, 255, 255, 0.65), transparent 2px),
+                radial-gradient(2px 2px at 65% 26%, rgba(255, 255, 255, 0.50), transparent 2px),
+                radial-gradient(2px 2px at 79% 38%, rgba(255, 255, 255, 0.68), transparent 2px),
+                radial-gradient(2px 2px at 93% 22%, rgba(255, 255, 255, 0.58), transparent 2px),
+                radial-gradient(2px 2px at 14% 56%, rgba(255, 255, 255, 0.62), transparent 2px),
+                radial-gradient(2px 2px at 28% 70%, rgba(255, 255, 255, 0.52), transparent 2px),
+                radial-gradient(2px 2px at 42% 54%, rgba(255, 255, 255, 0.66), transparent 2px),
+                radial-gradient(1.5px 1.5px at 5% 25%, rgba(255, 255, 255, 0.30), transparent 1.5px),
+                radial-gradient(1.5px 1.5px at 18% 45%, rgba(255, 255, 255, 0.38), transparent 1.5px),
+                radial-gradient(1.5px 1.5px at 31% 65%, rgba(255, 255, 255, 0.25), transparent 1.5px),
+                radial-gradient(1px 1px at 3% 8%, rgba(255, 255, 255, 0.15), transparent 1px),
+                radial-gradient(1px 1px at 15% 28%, rgba(255, 255, 255, 0.18), transparent 1px),
+                radial-gradient(1px 1px at 27% 48%, rgba(255, 255, 255, 0.12), transparent 1px);
+            background-size: 50% 50%;
+            animation: rotate-stars 300s linear infinite, star-twinkle-1 4s ease-in-out infinite alternate;
+        }
+
+        /* Star layer 2 */
+        .starry-bg::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 7% 31%, rgba(255, 255, 255, 0.52), transparent 2px),
+                radial-gradient(2px 2px at 19% 51%, rgba(255, 255, 255, 0.62), transparent 2px),
+                radial-gradient(2px 2px at 31% 71%, rgba(255, 255, 255, 0.50), transparent 2px),
+                radial-gradient(2px 2px at 43% 91%, rgba(255, 255, 255, 0.65), transparent 2px),
+                radial-gradient(2px 2px at 55% 21%, rgba(255, 255, 255, 0.54), transparent 2px),
+                radial-gradient(2px 2px at 67% 41%, rgba(255, 255, 255, 0.58), transparent 2px),
+                radial-gradient(1.5px 1.5px at 4% 44%, rgba(255, 255, 255, 0.25), transparent 1.5px),
+                radial-gradient(1.5px 1.5px at 16% 64%, rgba(255, 255, 255, 0.40), transparent 1.5px),
+                radial-gradient(1px 1px at 2% 19%, rgba(255, 255, 255, 0.12), transparent 1px),
+                radial-gradient(1px 1px at 14% 39%, rgba(255, 255, 255, 0.16), transparent 1px);
+            background-size: 50% 50%;
+            animation: rotate-stars 300s linear infinite reverse, star-twinkle-2 5s ease-in-out infinite alternate;
+        }
+
+        /* Light mode - larger soft dots */
+        :root[data-theme="light"] .starry-bg::before {
+            background-image:
+                radial-gradient(8px 8px at 8% 12%, rgba(0, 0, 0, 0.14), transparent 8px),
+                radial-gradient(10px 10px at 23% 34%, rgba(0, 0, 0, 0.16), transparent 10px),
+                radial-gradient(6px 6px at 37% 18%, rgba(0, 0, 0, 0.12), transparent 6px),
+                radial-gradient(12px 12px at 51% 42%, rgba(0, 0, 0, 0.15), transparent 12px),
+                radial-gradient(7px 7px at 65% 26%, rgba(0, 0, 0, 0.11), transparent 7px),
+                radial-gradient(9px 9px at 79% 38%, rgba(0, 0, 0, 0.17), transparent 9px),
+                radial-gradient(6px 6px at 93% 22%, rgba(0, 0, 0, 0.13), transparent 6px),
+                radial-gradient(11px 11px at 14% 56%, rgba(0, 0, 0, 0.14), transparent 11px),
+                radial-gradient(8px 8px at 28% 70%, rgba(0, 0, 0, 0.12), transparent 8px),
+                radial-gradient(10px 10px at 42% 54%, rgba(0, 0, 0, 0.16), transparent 10px);
+        }
+
+        :root[data-theme="light"] .starry-bg::after {
+            background-image:
+                radial-gradient(9px 9px at 7% 31%, rgba(0, 0, 0, 0.13), transparent 9px),
+                radial-gradient(7px 7px at 19% 51%, rgba(0, 0, 0, 0.15), transparent 7px),
+                radial-gradient(11px 11px at 31% 71%, rgba(0, 0, 0, 0.11), transparent 11px),
+                radial-gradient(8px 8px at 43% 91%, rgba(0, 0, 0, 0.14), transparent 8px),
+                radial-gradient(10px 10px at 55% 21%, rgba(0, 0, 0, 0.12), transparent 10px),
+                radial-gradient(6px 6px at 67% 41%, rgba(0, 0, 0, 0.13), transparent 6px),
+                radial-gradient(12px 12px at 4% 44%, rgba(0, 0, 0, 0.10), transparent 12px),
+                radial-gradient(7px 7px at 16% 64%, rgba(0, 0, 0, 0.16), transparent 7px);
+        }
+
+        /* Hide mist elements */
+        .mist-blob-1,
+        .mist-blob-2,
+        .mist-blob-footer {
             display: none;
         }
 
-        :root:not([data-theme="light"]) .starry-bg {
-            background-image:
-                /* Large bright stars */
-                radial-gradient(4px 4px at 15% 25%, rgba(255, 255, 255, 1), transparent 4px),
-                radial-gradient(4px 4px at 85% 15%, rgba(255, 255, 255, 0.98), transparent 4px),
-                radial-gradient(4px 4px at 45% 75%, rgba(255, 255, 255, 1), transparent 4px),
-                radial-gradient(4px 4px at 75% 65%, rgba(255, 255, 255, 1), transparent 4px),
-                radial-gradient(4px 4px at 35% 45%, rgba(255, 255, 255, 0.96), transparent 4px),
-                radial-gradient(4px 4px at 55% 85%, rgba(255, 255, 255, 0.99), transparent 4px),
-                radial-gradient(4px 4px at 25% 5%, rgba(255, 255, 255, 0.97), transparent 4px),
-                radial-gradient(4px 4px at 95% 45%, rgba(255, 255, 255, 0.98), transparent 4px),
-                /* Medium stars */
-                radial-gradient(2.5px 2.5px at 25% 45%, rgba(255, 255, 255, 0.9), transparent 2.5px),
-                radial-gradient(2.5px 2.5px at 65% 35%, rgba(255, 255, 255, 0.88), transparent 2.5px),
-                radial-gradient(2.5px 2.5px at 35% 85%, rgba(255, 255, 255, 0.92), transparent 2.5px),
-                radial-gradient(2.5px 2.5px at 95% 55%, rgba(255, 255, 255, 0.9), transparent 2.5px),
-                radial-gradient(2.5px 2.5px at 55% 15%, rgba(255, 255, 255, 0.87), transparent 2.5px),
-                radial-gradient(2.5px 2.5px at 5% 75%, rgba(255, 255, 255, 0.91), transparent 2.5px),
-                radial-gradient(2.5px 2.5px at 75% 25%, rgba(255, 255, 255, 0.89), transparent 2.5px),
-                radial-gradient(2.5px 2.5px at 45% 95%, rgba(255, 255, 255, 0.9), transparent 2.5px),
-                /* Small stars */
-                radial-gradient(2px 2px at 10% 60%, rgba(255, 255, 255, 0.75), transparent 2px),
-                radial-gradient(2px 2px at 30% 20%, rgba(255, 255, 255, 0.7), transparent 2px),
-                radial-gradient(2px 2px at 50% 50%, rgba(255, 255, 255, 0.73), transparent 2px),
-                radial-gradient(2px 2px at 70% 90%, rgba(255, 255, 255, 0.77), transparent 2px),
-                radial-gradient(2px 2px at 90% 30%, rgba(255, 255, 255, 0.72), transparent 2px),
-                radial-gradient(2px 2px at 20% 80%, rgba(255, 255, 255, 0.75), transparent 2px),
-                radial-gradient(2px 2px at 40% 40%, rgba(255, 255, 255, 0.71), transparent 2px),
-                radial-gradient(2px 2px at 60% 70%, rgba(255, 255, 255, 0.76), transparent 2px),
-                radial-gradient(2px 2px at 80% 10%, rgba(255, 255, 255, 0.74), transparent 2px),
-                radial-gradient(2px 2px at 12% 35%, rgba(255, 255, 255, 0.78), transparent 2px),
-                radial-gradient(2px 2px at 38% 65%, rgba(255, 255, 255, 0.73), transparent 2px),
-                radial-gradient(2px 2px at 52% 95%, rgba(255, 255, 255, 0.75), transparent 2px),
-                radial-gradient(2px 2px at 78% 45%, rgba(255, 255, 255, 0.72), transparent 2px),
-                radial-gradient(2px 2px at 92% 85%, rgba(255, 255, 255, 0.77), transparent 2px),
-                radial-gradient(2px 2px at 22% 12%, rgba(255, 255, 255, 0.74), transparent 2px),
-                radial-gradient(2px 2px at 68% 52%, rgba(255, 255, 255, 0.76), transparent 2px),
-                radial-gradient(2px 2px at 42% 78%, rgba(255, 255, 255, 0.71), transparent 2px),
-                radial-gradient(2px 2px at 88% 38%, rgba(255, 255, 255, 0.75), transparent 2px),
-                radial-gradient(2px 2px at 8% 88%, rgba(255, 255, 255, 0.73), transparent 2px),
-                radial-gradient(2px 2px at 52% 28%, rgba(255, 255, 255, 0.76), transparent 2px),
-                radial-gradient(2px 2px at 82% 68%, rgba(255, 255, 255, 0.74), transparent 2px);
-            background-size: 50% 50%;
-            animation: rotate-stars 300s linear infinite;
+        /* Twinkle animations */
+        @keyframes star-twinkle-1 {
+            0% { opacity: 1; }
+            50% { opacity: 0.85; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes star-twinkle-2 {
+            0% { opacity: 1; }
+            50% { opacity: 0.80; }
+            100% { opacity: 1; }
         }
 
         @keyframes rotate-stars {
@@ -119,109 +202,97 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Light mode - Geometric shapes */
-        :root[data-theme="light"] .starry-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        :root[data-theme="light"] .starry-bg svg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-
-        .geo-shape {
-            transform-box: fill-box;
-            transform-origin: center;
-        }
-
         /* Top Bar */
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 32px;
+            height: 48px;
+            padding: 0 32px;
             border-bottom: 1px solid var(--border);
             font-size: 13px;
             color: var(--text-secondary);
             position: relative;
             z-index: 1;
             background: var(--bg-primary);
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
 
         .top-left {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 16px;
+            height: 100%;
         }
 
         .separator {
-            color: var(--text-muted);
-            opacity: 0.6;
-            margin: 0 4px;
+            color: var(--border);
+            font-size: 12px;
+            opacity: 0.5;
+            margin: 0 0;
+            transition: color 0.3s ease;
         }
 
         #time {
             font-weight: 600;
             color: var(--text-primary);
             font-variant-numeric: tabular-nums;
+            font-size: 14px;
+            transition: color 0.3s ease;
         }
 
         #date {
             color: var(--text-secondary);
+            transition: color 0.3s ease;
         }
 
         #weather {
             color: var(--text-secondary);
+            transition: color 0.3s ease;
         }
 
         .work-countdown {
             color: var(--text-secondary);
+            transition: color 0.3s ease;
         }
 
         .work-countdown .highlight {
             color: var(--accent);
-            font-weight: 500;
+            font-weight: 600;
         }
 
-        /* Floating Theme Toggle */
+        /* Top Bar Theme Toggle (Notion/Linear style) */
         .theme-toggle {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            border: 1px solid var(--border);
-            background: var(--bg-card);
+            top: 10px;
+            right: 32px;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
             color: var(--text-secondary);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.15s ease;
             z-index: 100;
         }
 
         .theme-toggle svg {
-            width: 22px;
-            height: 22px;
-            fill: currentColor;
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            fill: none;
+            opacity: 0.5;
+            transition: all 0.15s ease;
         }
 
-        .theme-toggle:hover {
-            background: var(--bg-hover);
-            color: var(--text-primary);
-            border-color: #4285f4;
-            transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        .theme-toggle:hover svg {
+            fill: currentColor;
+            opacity: 1;
         }
 
         .theme-toggle:active {
@@ -256,7 +327,7 @@
         .icon-btn svg {
             width: 18px;
             height: 18px;
-            fill: currentColor;
+            stroke: currentColor;
         }
 
         .icon-btn:hover {
@@ -271,114 +342,186 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 40px 32px;
+            padding: 80px 32px 32px 32px;
             position: relative;
-            z-index: 1;
+            min-height: 0;
         }
 
         /* Welcome Message */
         .welcome-message {
             text-align: center;
-            margin-bottom: 32px;
+            margin-top: 0;
+            margin-bottom: 48px;
+            flex-shrink: 0;
         }
 
         .welcome-message h1 {
-            font-size: 32px;
-            font-weight: 600;
-            color: var(--text-primary);
+            font-size: 28px;
+            font-weight: 500;
+            color: #1A1A1A;
             margin: 0;
-            letter-spacing: -0.5px;
+            letter-spacing: 0.02em;
+            opacity: 0.9;
+            transition: color 0.3s ease;
+        }
+
+        :root:not([data-theme="light"]) .welcome-message h1 {
+            color: #ffffff;
         }
 
         /* Search Section - HERO */
         .search-hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             width: 100%;
             max-width: 1000px;
-            margin-bottom: 40px;
+            margin-bottom: 64px;
+            flex-shrink: 0;
         }
 
-        /* Search Engine Selector - Above search box */
+        /* Search Engine Selector - Tag Style (Notion/Linear) */
         .engine-selector {
-            display: flex;
-            justify-content: center;
+            display: inline-flex;
+            align-items: center;
             gap: 8px;
-            margin-bottom: 16px;
+            margin-top: 24px;
+            margin-bottom: 20px;
+            padding: 0;
+            background: transparent;
+            border: none;
         }
 
         .engine-option {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
+            gap: 6px;
+            padding: 8px 22px;
+            border-radius: 6px;
+            border: none;
             background: transparent;
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 500;
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 15px;
+            font-weight: 400;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.15s ease;
+        }
+
+        .engine-option::before,
+        .engine-option::after {
+            content: '';
+            display: inline-block;
+            width: 0.3em;
+            visibility: hidden;
+        }
+
+        .engine-option.active::before,
+        .engine-option.active::after {
+            visibility: visible;
+        }
+
+        :root[data-theme="light"] .engine-option {
+            color: rgba(0, 0, 0, 0.35);
         }
 
         .engine-option svg {
-            width: 18px;
-            height: 18px;
-            fill: currentColor;
+            width: 16px;
+            height: 16px;
+            opacity: 0.5;
+            transition: all 0.15s ease;
         }
 
         .engine-option:hover {
-            background: var(--bg-hover);
-            color: var(--text-primary);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .engine-option:hover::before,
+        .engine-option:hover::after {
+            content: '[';
+            color: rgba(255, 255, 255, 0.25);
+            font-weight: 400;
+            visibility: visible;
+        }
+
+        .engine-option:hover::after {
+            content: ']';
+        }
+
+        :root[data-theme="light"] .engine-option:hover {
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        :root[data-theme="light"] .engine-option:hover::before,
+        :root[data-theme="light"] .engine-option:hover::after {
+            color: rgba(0, 0, 0, 0.20);
+        }
+
+        .engine-option:hover svg {
+            opacity: 0.7;
         }
 
         .engine-option.active {
-            background: rgba(26, 26, 26, 0.08);
-            border-color: #4285f4;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .engine-option.active::before,
+        .engine-option.active::after {
+            content: '[';
             color: #4285f4;
-            backdrop-filter: blur(6px);
+            font-weight: 400;
+            visibility: visible;
+        }
+
+        .engine-option.active::after {
+            content: ']';
         }
 
         :root[data-theme="light"] .engine-option.active {
-            background: rgba(255, 255, 255, 0.15);
+            background: transparent;
+            color: rgba(0, 0, 0, 0.85);
         }
 
-        /* Unified card backdrop */
-        .backdrop-card {
-            backdrop-filter: blur(6px);
+        :root[data-theme="light"] .engine-option.active::before,
+        :root[data-theme="light"] .engine-option.active::after {
+            color: rgba(26, 115, 232, 0.5);
         }
 
-        .engine-option.active[data-engine="bing"] {
-            border-color: #00a4ef;
-            color: #00a4ef;
-        }
-
-        .engine-option.active[data-engine="baidu"] {
-            border-color: #2932e1;
-            color: #2932e1;
+        .engine-option.active svg {
+            opacity: 1;
         }
 
         /* Search Container */
         .search-container {
             position: relative;
-            border-radius: 16px;
-            background: rgba(26, 26, 26, 0.08);
-            border: 1px solid var(--border);
-            transition: all 0.2s;
-            backdrop-filter: blur(6px);
+            width: 100%;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: rgba(0, 0, 0, 0.05) 0 3px 16px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, border-color 0.3s ease;
         }
 
         :root[data-theme="light"] .search-container {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        /* Quick Link Cards */
-        .quick-link {
-            backdrop-filter: blur(6px);
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            box-shadow: rgba(0, 0, 0, 0.05) 0 3px 16px;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
         }
 
         .search-container:focus-within {
-            border-color: #4285f4;
+            border-color: var(--accent);
+            box-shadow: rgba(66, 133, 244, 0.25) 0 4px 20px, 0 0 0 3px rgba(66, 133, 244, 0.15);
+            transform: translateY(-2px);
+            z-index: 10000;
+        }
+
+        :root[data-theme="light"] .search-container:focus-within {
+            border-color: var(--accent);
+            box-shadow: rgba(66, 133, 244, 0.20) 0 4px 20px, 0 0 0 3px rgba(66, 133, 244, 0.12);
         }
 
         /* Search Suggestions */
@@ -389,20 +532,21 @@
             right: 0;
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 18px;
             margin-top: 8px;
             max-height: 300px;
-            overflow-y: auto;
             display: none;
+            flex-direction: column;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            z-index: 100;
+            z-index: 9999;
         }
 
         .search-suggestions.show {
-            display: block;
+            display: flex;
         }
 
         .suggestion-header {
+            flex-shrink: 0;
             padding: 10px 16px;
             font-size: 12px;
             color: var(--text-muted);
@@ -412,14 +556,10 @@
             align-items: center;
         }
 
-        .clear-history {
-            color: var(--accent);
-            cursor: pointer;
-            font-size: 11px;
-        }
-
-        .clear-history:hover {
-            text-decoration: underline;
+        .suggestion-list {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
         }
 
         .suggestion-item {
@@ -454,11 +594,6 @@
             white-space: nowrap;
         }
 
-        .suggestion-time {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
         .suggestion-empty {
             padding: 20px;
             text-align: center;
@@ -466,19 +601,60 @@
             font-size: 13px;
         }
 
+        .suggestion-empty-hint {
+            padding: 32px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .suggestion-empty-hint svg {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 8px;
+            opacity: 0.4;
+        }
+
+        .suggestion-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         .search-input {
             width: 100%;
-            padding: 18px 70px 18px 20px;
+            padding: 20px 70px 20px 20px;
             background: transparent;
             border: none;
-            border-radius: 16px;
+            border-radius: 18px;
             font-size: 17px;
             color: var(--text-primary);
             outline: none;
         }
 
         .search-input::placeholder {
-            color: var(--text-muted);
+            color: #6B7280;
+        }
+
+        :root:not([data-theme="light"]) .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.55);
         }
 
         .search-icons {
@@ -508,7 +684,7 @@
         .search-icon-btn svg {
             width: 20px;
             height: 20px;
-            fill: currentColor;
+            stroke: currentColor;
         }
 
         .search-icon-btn:hover {
@@ -520,13 +696,13 @@
         .icon {
             width: 18px;
             height: 18px;
-            fill: currentColor;
+            stroke: currentColor;
         }
 
         /* Quick Links Under Search */
         .quick-links {
             width: 100%;
-            max-width: 994px;
+            max-width: 1100px;
             margin-left: auto;
             margin-right: auto;
             padding: 0 4px 12px 4px;
@@ -537,7 +713,7 @@
             display: grid;
             grid-auto-columns: 120px;
             grid-auto-flow: column;
-            gap: 20px;
+            gap: clamp(12px, 2vh, 20px);
             overflow-x: auto;
             overflow-y: visible;
             scroll-behavior: smooth;
@@ -623,62 +799,60 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: clamp(8px, 1.5vh, 12px);
             width: 120px;
             height: 120px;
-            background: rgba(26, 26, 26, 0.08);
+            background: transparent;
             border: 1px solid var(--border);
             border-radius: 18px;
             text-decoration: none;
             color: var(--text-secondary);
             font-size: 13px;
             font-weight: 500;
-            transition: all 0.2s;
+            transition: all 0.2s, border-color 0.3s ease, color 0.3s ease;
             white-space: nowrap;
             scroll-snap-align: start;
-            backdrop-filter: blur(6px);
-        }
-
-        :root[data-theme="light"] .quick-link {
-            background: rgba(255, 255, 255, 0.15);
         }
 
         .quick-link .icon {
             width: 34px;
             height: 34px;
-            fill: currentColor;
+            stroke: #6B7280;
+        }
+
+        .quick-link:hover .icon {
+            stroke: #111;
+        }
+
+        :root:not([data-theme="light"]) .quick-link:hover .icon {
+            stroke: #ffffff;
         }
 
         .quick-link:hover {
-            background: var(--bg-hover);
+            background: var(--card-backdrop);
             border-color: #4285f4;
             color: var(--text-primary);
-            transform: translateY(-3px);
         }
 
         /* Dashboard Grid */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
+            gap: clamp(12px, 2vh, 16px);
             width: 100%;
             max-width: 1000px;
         }
 
         .dash-card {
-            background: rgba(26, 26, 26, 0.08);
+            background: transparent;
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px;
+            border-radius: 18px;
+            padding: clamp(12px, 1.8vh, 20px);
             transition: all 0.2s;
-            backdrop-filter: blur(6px);
-        }
-
-        :root[data-theme="light"] .dash-card {
-            background: rgba(255, 255, 255, 0.7);
         }
 
         .dash-card:hover {
+            background: var(--card-backdrop);
             border-color: #4285f4;
         }
 
@@ -701,16 +875,21 @@
             width: 32px;
             height: 32px;
             border-radius: 10px;
-            background: var(--bg-hover);
+            background: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 1px solid var(--border);
+        }
+
+        .dash-card:hover .card-icon {
+            background: var(--card-backdrop);
         }
 
         .card-icon svg {
             width: 18px;
             height: 18px;
-            fill: var(--text-secondary);
+            stroke: var(--text-secondary);
         }
 
         .card-status {
@@ -738,8 +917,13 @@
             flex: 1;
             text-align: center;
             padding: 12px;
-            background: var(--bg-secondary);
-            border-radius: 8px;
+            background: transparent;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-item:hover {
+            background: var(--card-backdrop);
         }
 
         .stat-value {
@@ -765,16 +949,17 @@
             align-items: center;
             gap: 10px;
             padding: 10px 12px;
-            background: var(--bg-secondary);
-            border-radius: 8px;
+            background: transparent;
+            border-radius: 12px;
             margin-bottom: 8px;
             cursor: pointer;
             font-size: 13px;
             transition: all 0.15s;
+            border: 1px solid var(--border);
         }
 
         .task-item:hover {
-            background: var(--bg-hover);
+            background: var(--card-backdrop);
         }
 
         .task-check {
@@ -815,13 +1000,13 @@
         /* Footer */
         .footer {
             text-align: center;
-            padding: 16px;
+            padding: 24px 16px 40px 16px;
             font-size: 12px;
-            color: var(--text-muted);
-            border-top: 1px solid var(--border);
+            color: #9CA3AF;
+            border-top: none;
             position: relative;
-            z-index: 1;
-            background: var(--bg-primary);
+            background: transparent;
+            transition: color 0.3s ease;
         }
 
         /* Loading */
@@ -960,9 +1145,10 @@
             justify-content: center;
             gap: 12px;
             width: 100%;
-            max-width: 994px;
-            margin: 0 auto 36px auto;
-            padding: 20px 0;
+            max-width: 1100px;
+            margin: 0 auto 48px auto;
+            padding: 8px 0;
+            flex-shrink: 0;
         }
 
         .notion-links::before,
@@ -979,37 +1165,35 @@
             gap: 10px;
             padding: 12px 18px;
             text-decoration: none;
-            color: var(--text-muted);
+            color: var(--text-primary);
             font-size: 14px;
             font-weight: 500;
-            transition: all 0.2s;
-            border-radius: 12px;
+            transition: all 0.2s, color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+            border-radius: 18px;
             border: 1px solid transparent;
+            background: transparent;
         }
 
         .notion-link:hover {
             color: var(--text-primary);
-            background: rgba(26, 26, 26, 0.7);
+            background: var(--card-backdrop);
             border-color: #4285f4;
-            transform: translateY(-2px);
             backdrop-filter: blur(8px);
-        }
-
-        :root[data-theme="light"] .notion-link:hover {
-            background: rgba(255, 255, 255, 0.8);
         }
 
         .notion-link svg {
             width: 18px;
             height: 18px;
-            fill: currentColor;
+            stroke: #6B7280;
             transition: all 0.2s;
-            opacity: 0.7;
         }
 
         .notion-link:hover svg {
-            transform: scale(1.1);
-            opacity: 1;
+            stroke: #111;
+        }
+
+        :root:not([data-theme="light"]) .notion-link:hover svg {
+            stroke: #ffffff;
         }
 
         .notion-link-main {
@@ -1018,7 +1202,47 @@
         }
 
         .notion-link-main svg {
-            opacity: 1;
+            stroke: var(--text-primary);
+        }
+
+        /* Compact layout for smaller viewport heights */
+        @media (max-height: 760px) {
+            .main-content {
+                padding: 48px 24px 24px 24px;
+            }
+
+            .welcome-message {
+                margin-bottom: 32px;
+            }
+
+            .welcome-message h1 {
+                font-size: 24px;
+            }
+
+            .engine-selector {
+                margin-bottom: 32px;
+            }
+
+            .search-hero {
+                margin-bottom: 40px;
+            }
+
+            .notion-links {
+                margin: 0 auto 40px auto;
+                padding: 12px 0;
+            }
+
+            .quick-links {
+                padding: 0 4px 4px 4px;
+            }
+
+            .dashboard-grid {
+                gap: 12px;
+            }
+
+            .dash-card {
+                padding: 12px;
+            }
         }
     </style>
 </head>
@@ -1026,17 +1250,21 @@
     <!-- Starry Background -->
     <div class="starry-bg">
         <svg id="geoSvg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice"></svg>
+        <!-- Morning mist blobs (light mode only) -->
+        <div class="mist-blob-1"></div>
+        <div class="mist-blob-2"></div>
+        <div class="mist-blob-footer"></div>
     </div>
 
     <!-- Top Bar -->
     <div class="top-bar">
         <div class="top-left">
             <span id="time">--:--</span>
-            <span class="separator">|</span>
+            <span class="separator">·</span>
             <span id="date">加载中...</span>
-            <span class="separator">|</span>
+            <span class="separator">·</span>
             <span id="weather" class="weather">定位中...</span>
-            <span class="separator">|</span>
+            <span class="separator">·</span>
             <span id="workCountdown" class="work-countdown">加载中...</span>
         </div>
     </div>
@@ -1052,45 +1280,32 @@
         <div class="search-hero">
             <div class="engine-selector" id="engineSelector">
                 <button class="engine-option active" data-engine="google">
-                    <svg viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M12 4c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm0-10c2.21 0 4 1.79 4 4h-2c0-1.1-.9-2-2-2s-2 .9-2 2h-2c0-2.21 1.79-4 4-4z"/>
-                    </svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     <span>Google</span>
                 </button>
                 <button class="engine-option" data-engine="bing">
-                    <svg viewBox="0 0 24 24">
-                        <rect x="5" y="5" width="6" height="6" rx="1" fill="currentColor"/>
-                        <rect x="13" y="5" width="6" height="6" rx="1" fill="currentColor"/>
-                        <rect x="5" y="13" width="6" height="6" rx="1" fill="currentColor"/>
-                        <rect x="13" y="13" width="6" height="6" rx="1" fill="currentColor"/>
-                    </svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>
                     <span>Bing</span>
                 </button>
                 <button class="engine-option" data-engine="baidu">
-                    <svg viewBox="0 0 24 24">
-                        <circle cx="8" cy="8" r="3" fill="currentColor"/>
-                        <circle cx="16" cy="8" r="3" fill="currentColor"/>
-                        <circle cx="8" cy="16" r="3" fill="currentColor"/>
-                        <circle cx="16" cy="16" r="3" fill="currentColor"/>
-                    </svg>
-                    <span>百度</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/><path d="M8.5 8.5a2.5 2.5 0 0 0 0 5"/><path d="M15.5 8.5a2.5 2.5 0 0 0 0 5"/></svg>
+                    <span>Baidu</span>
                 </button>
             </div>
             <div class="search-container">
-                <input type="text" class="search-input" id="searchInput" placeholder="搜索或输入网址" autofocus autocomplete="off">
+                <input type="text" class="search-input" id="searchInput" placeholder="今天想了解什么？" autofocus autocomplete="off">
                 <div class="search-icons">
                     <button class="search-icon-btn" id="clearSearch" title="清空" style="display: none;">
-                        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                     </button>
                     <button class="search-icon-btn" id="searchBtn" title="搜索">
-                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     </button>
                 </div>
                 <!-- Search Suggestions -->
                 <div class="search-suggestions" id="searchSuggestions">
                     <div class="suggestion-header">
-                        <span>搜索历史</span>
-                        <span class="clear-history" id="clearHistory">清空历史</span>
+                        <span>搜索建议</span>
                     </div>
                     <div class="suggestion-list" id="suggestionList"></div>
                 </div>
@@ -1100,23 +1315,23 @@
         <!-- Notion Quick Links -->
         <div class="notion-links">
             <a href="notion://" class="notion-link notion-link-main">
-                <svg viewBox="0 0 24 24"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>
                 Notion
             </a>
             <a href="https://www.notion.so/A01-64584211a9364743a4530c3edd24292e?pvs=21" target="_blank" class="notion-link">
-                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/><path d="M12 11h.01"/><path d="M8 11h.01"/><path d="M16 11h.01"/></svg>
                 收集箱
             </a>
             <a href="https://www.notion.so/A02-75ed3e011173435394c946bbcfbcc3d8?pvs=21" target="_blank" class="notion-link">
-                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
                 碎片池
             </a>
             <a href="https://www.notion.so/B01-e10f090ec3f646e8b9c6e67decafbd3d?pvs=21" target="_blank" class="notion-link">
-                <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                 工作日志
             </a>
             <a href="https://www.notion.so/B03-3c66c113d7e244b8a40d919da2e2571f?pvs=21" target="_blank" class="notion-link">
-                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                 任务列表
             </a>
         </div>
@@ -1125,39 +1340,43 @@
                 <div class="scroll-hint" id="scrollHint"></div>
                 <div class="quick-links-container" id="quickLinksContainer">
                     <a href="https://mail.qiye.163.com/static/login/" target="_blank" class="quick-link">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                         <span>企业邮箱</span>
                     </a>
                     <a href="https://chat.openai.com" target="_blank" class="quick-link">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
                         <span>ChatGPT</span>
                     </a>
+                    <a href="https://bigmodel.cn/console/overview" target="_blank" class="quick-link">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M12 16v4"/><path d="M8 12h8"/><circle cx="12" cy="12" r="10"/><path d="M9 20h6"/></svg>
+                        <span>智谱AI</span>
+                    </a>
                     <a href="https://github.com" target="_blank" class="quick-link">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 7.01 9.54.5.09.68-.22.68-.48v-1.71c-2.78.6-3.37-1.34-3.37-1.34-.45-1.15-1.11-1.46-1.11-1.46-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.75c0 .27.18.58.69.48C19.13 20.16 22 16.42 22 12c0-5.52-4.48-10-10-10z"/></svg>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
                         <span>GitHub</span>
                     </a>
                     <a href="https://www.v2ex.com" target="_blank" class="quick-link">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                         <span>V2EX</span>
                     </a>
                     <a href="https://fanyi.baidu.com/" target="_blank" class="quick-link">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19h5l3.6-7.59L12 14l1.8-3.59L17.5 19h5l-7.63-6.93z"/></svg>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14"/><path d="M5 12h14"/><path d="M5 16h14"/><path d="m17 8-4 4 4 4"/><path d="M7 12h.01"/></svg>
                         <span>百度翻译</span>
                     </a>
                     <a href="https://momoyu.cc/" target="_blank" class="quick-link">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2v-6.09L12 3zm5 11.88l-1 .55V17h-2v-1.57l-1-.55L6.3 12l7.7-4.2 7.7 4.2-2.7 1.48z"/></svg>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
                         <span>在线学习</span>
                     </a>
                     <a href="https://www.zhihu.com" target="_blank" class="quick-link">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15c0 1.65-1.35 3-3 3s-3-1.35-3-3c0-1.5.45-2.1 1.17-2.17l-.9-.92C11.33 10.45 10.5 9 10.5 7.5c0-2.48 2.02-4.5 4.5-4.5s4.5 2.02 4.5 4.5c0 1.5-.83 2.95-1.93 4.75z"/></svg>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
                         <span>知乎</span>
                     </a>
                     <a href="https://www.bilibili.com" target="_blank" class="quick-link">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                         <span>哔哩哔哩</span>
                     </a>
                     <a href="https://www.youtube.com/" target="_blank" class="quick-link">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg>
                         <span>YouTube</span>
                     </a>
                 </div>
@@ -1173,8 +1392,8 @@
 
     <!-- Floating Theme Toggle -->
     <button class="theme-toggle" id="themeToggle" title="切换主题">
-        <svg class="moon-icon" viewBox="0 0 24 24"><path d="M17.01 11L21 15l-3.99 4v-3H10v-2h7.01v-3zM6.99 9l3.99-4v3H14v2h-7.01v3l-3.99-4z"/></svg>
-        <svg class="sun-icon" viewBox="0 0 24 24"><path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
     </button>
 
     <script>
@@ -1191,8 +1410,8 @@
                 // Morandi colors
                 const colors = ['#E8D5D0', '#D4E2E8', '#E5D5E8', '#D5E8DB', '#E8E5D5', '#D5DEE8', '#E0D5E0', '#D5E0E5'];
 
-                // Generate 6-9 random shapes
-                const shapeCount = 6 + Math.floor(Math.random() * 4);
+                // Generate 2-3 random shapes (reduced by ~30%)
+                const shapeCount = 2 + Math.floor(Math.random() * 2);
 
                 // Pre-inject unified keyframe animations
                 let existingStyle = document.getElementById('geo-keyframes');
@@ -1223,9 +1442,9 @@
                 for (let i = 0; i < shapeCount; i++) {
                     const shapeType = Math.floor(Math.random() * 3);
                     const color = colors[Math.floor(Math.random() * colors.length)];
-                    const opacity = 0.3 + Math.random() * 0.2;
+                    const opacity = 0.1 + Math.random() * 0.04; // 10-14% opacity
 
-                    // Random position (avoiding center area)
+                    // Random position (biased towards bottom for visual weight)
                     let cx, cy;
                     const centerX = 960;
                     const centerY = 540;
@@ -1233,7 +1452,8 @@
 
                     do {
                         cx = 100 + Math.random() * 1720;
-                        cy = 100 + Math.random() * 880;
+                        // Bias towards bottom (60% of height range starts lower)
+                        cy = 200 + Math.random() * 780;
                     } while (Math.sqrt((cx - centerX) ** 2 + (cy - centerY) ** 2) < minDist);
 
                     const size = 100 + Math.random() * 150;
@@ -1277,6 +1497,9 @@
         function init() {
             console.log('Initializing...');
 
+            // Get saved search engine preference before initializing UI
+            const currentEngine = localStorage.getItem('searchEngine') || 'google';
+
             try {
                 initTheme();
             } catch (e) {
@@ -1289,6 +1512,13 @@
                 console.log('Event listeners set up successfully');
             } catch (e) {
                 console.error('Error setting up event listeners:', e);
+            }
+
+            // Initialize search engine UI from saved preference
+            try {
+                switchEngine(currentEngine);
+            } catch (e) {
+                console.error('Search engine init error:', e);
             }
 
             // Update time
@@ -1346,7 +1576,7 @@
             const dateEl = document.getElementById('date');
 
             if (timeEl) timeEl.textContent = `${hours}:${minutes}`;
-            if (dateEl) dateEl.textContent = `周${days[now.getDay()]} · ${months[now.getMonth()]} 月 ${now.getDate()} 日`;
+            if (dateEl) dateEl.textContent = `${months[now.getMonth()]}月${now.getDate()}日 周${days[now.getDay()]}`;
 
             // Update greeting message
             updateGreeting(now.getHours());
@@ -1387,12 +1617,15 @@
                 periodKey = 'late_night';
             }
 
-            // Check if we need to update (period changed or first visit)
-            const cachedPeriod = localStorage.getItem('greetingPeriod');
+            // Check if we need to update (hour changed or first visit)
+            const today = new Date().toDateString();
+            const currentHour = hour;
+            const cacheKey = `${today}-${currentHour}`;
+            const cachedKey = localStorage.getItem('greetingCacheKey');
             const cachedGreeting = localStorage.getItem('greetingText');
 
-            // If same period and has cached greeting, use it
-            if (cachedPeriod === periodKey && cachedGreeting) {
+            // If same hour and has cached greeting, use it
+            if (cachedKey === cacheKey && cachedGreeting) {
                 greetingEl.textContent = cachedGreeting;
                 return;
             }
@@ -1495,24 +1728,23 @@
             // Get greetings for current period
             const greetings = greetingSets[periodKey] || greetingSets['late_night'];
 
-            // Use date + period as seed for consistent selection
-            const today = new Date().toDateString();
-            const seed = today + '-' + periodKey;
+            // Use cacheKey as seed for consistent selection
+            const seed = cacheKey;
             let hash = 0;
             for (let i = 0; i < seed.length; i++) {
                 hash = ((hash << 5) - hash) + seed.charCodeAt(i);
                 hash = hash & hash;
             }
 
-            // Select greeting based on hash (same for today's period)
+            // Select greeting based on hash (same for this hour)
             const index = Math.abs(hash) % greetings.length;
             const greeting = greetings[index];
 
             // Update display
             greetingEl.textContent = greeting;
 
-            // Cache it
-            localStorage.setItem('greetingPeriod', periodKey);
+            // Cache it with current hour key
+            localStorage.setItem('greetingCacheKey', cacheKey);
             localStorage.setItem('greetingText', greeting);
         }
 
@@ -1676,82 +1908,129 @@
         const SEARCH_ENGINES = {
             google: {
                 url: 'https://www.google.com/search?q=',
-                placeholder: '搜索或输入网址'
+                placeholder: '今天想了解什么？'
             },
             bing: {
                 url: 'https://www.bing.com/search?q=',
-                placeholder: '在 Bing 搜索'
+                placeholder: '用 Bing 探索世界'
             },
             baidu: {
                 url: 'https://www.baidu.com/s?wd=',
-                placeholder: '在百度搜索'
+                placeholder: '百度一下，找到你想要的'
             }
         };
 
-        let currentEngine = 'google';
-        const MAX_HISTORY = 8;
-        let searchHistory = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+        let currentEngine; // Will be set by switchEngine() in init()
         let selectedSuggestionIndex = -1;
+        let suggestionDebounceTimer = null;
 
-        function saveToHistory(query) {
-            if (!query.trim()) return;
-            // Remove if exists and add to front
-            searchHistory = searchHistory.filter(h => h.query !== query);
-            searchHistory.unshift({
-                query: query,
-                time: Date.now()
+        // Search suggestion API callbacks (global functions for JSONP)
+        window.googleSearchCallback = function(data) {
+            const suggestions = data[1] || [];
+            renderSuggestions(suggestions);
+        };
+
+        window.baiduSearchCallback = function(data) {
+            if (data && data.s) {
+                renderSuggestions(data.s);
+            } else {
+                renderSuggestions([]);
+            }
+        };
+
+        // Suggestion API URLs for each engine
+        const SUGGESTION_APIS = {
+            google: (q) => `https://suggestqueries.google.com/complete/search?output=firefox&client=firefox&callback=googleSearchCallback&q=${encodeURIComponent(q)}`,
+            baidu: (q) => `https://suggestion.baidu.com/su?wd=${encodeURIComponent(q)}&cb=baiduSearchCallback`,
+            bing: (q) => `https://suggestqueries.google.com/complete/search?output=firefox&client=firefox&callback=googleSearchCallback&q=${encodeURIComponent(q)}` // Bing uses Google for now
+        };
+
+        // Clean up old script tags
+        function cleanupOldScripts() {
+            const oldScripts = document.querySelectorAll('script[data-suggestion="true"]');
+            oldScripts.forEach(script => {
+                if (script.parentNode) {
+                    script.parentNode.removeChild(script);
+                }
             });
-            // Keep only MAX_HISTORY items
-            searchHistory = searchHistory.slice(0, MAX_HISTORY);
-            localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
         }
 
-        function renderSuggestions(filterText = '') {
+        async function fetchSuggestions(query) {
+            if (!query || query.length < 1) {
+                hideSuggestions();
+                return;
+            }
+
+            // Clear previous timer
+            if (suggestionDebounceTimer) {
+                clearTimeout(suggestionDebounceTimer);
+            }
+
+            // Debounce: wait 300ms after user stops typing
+            suggestionDebounceTimer = setTimeout(() => {
+                showSuggestionsLoading();
+
+                // Clean up old scripts
+                cleanupOldScripts();
+
+                // Use the appropriate API for current engine
+                const apiFunc = SUGGESTION_APIS[currentEngine] || SUGGESTION_APIS.google;
+                const apiUrl = apiFunc(query);
+
+                const script = document.createElement('script');
+                script.src = apiUrl;
+                script.setAttribute('data-suggestion', 'true');
+                script.onerror = () => {
+                    hideSuggestions();
+                };
+                document.body.appendChild(script);
+
+                // Fallback: if no response after 2 seconds, hide loading
+                setTimeout(() => {
+                    const loadingEl = document.querySelector('.suggestion-loading');
+                    if (loadingEl) {
+                        renderSuggestions([]); // Show empty state
+                    }
+                }, 2000);
+            }, 300);
+        }
+
+        function showSuggestionsLoading() {
             const suggestionsEl = document.getElementById('searchSuggestions');
             const listEl = document.getElementById('suggestionList');
-            const clearBtn = document.getElementById('clearHistory');
 
             if (!suggestionsEl || !listEl) return;
 
-            let filtered = searchHistory;
-            if (filterText) {
-                filtered = searchHistory.filter(h =>
-                    h.query.toLowerCase().includes(filterText.toLowerCase())
-                );
-            }
+            listEl.innerHTML = '<div class="suggestion-loading"><div class="loading-spinner"></div><span>加载中...</span></div>';
+            suggestionsEl.classList.add('show');
+        }
 
-            if (filtered.length === 0) {
-                listEl.innerHTML = '<div class="suggestion-empty">暂无搜索历史</div>';
-                clearBtn.style.display = 'none';
+        function renderSuggestions(suggestions) {
+            const suggestionsEl = document.getElementById('searchSuggestions');
+            const listEl = document.getElementById('suggestionList');
+
+            if (!suggestionsEl || !listEl) return;
+
+            if (suggestions.length === 0) {
+                listEl.innerHTML = `
+                    <div class="suggestion-empty-hint">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="11" y1="14" x2="11" y2="14"/></svg>
+                        <div>输入关键词获取搜索建议</div>
+                    </div>
+                `;
             } else {
-                listEl.innerHTML = filtered.map((h, i) => {
-                    const time = formatTimeAgo(h.time);
+                listEl.innerHTML = suggestions.slice(0, 8).map((suggestion, i) => {
                     return `
-                        <div class="suggestion-item" data-index="${i}" data-query="${h.query}">
-                            <svg class="suggestion-icon" viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" fill="currentColor"/></svg>
-                            <span class="suggestion-text">${h.query}</span>
-                            <span class="suggestion-time">${time}</span>
+                        <div class="suggestion-item" data-index="${i}" data-query="${suggestion}">
+                            <svg class="suggestion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                            <span class="suggestion-text">${suggestion}</span>
                         </div>
                     `;
                 }).join('');
-                clearBtn.style.display = 'block';
             }
 
             suggestionsEl.classList.add('show');
             selectedSuggestionIndex = -1;
-        }
-
-        function formatTimeAgo(timestamp) {
-            const diff = Date.now() - timestamp;
-            const minutes = Math.floor(diff / 60000);
-            const hours = Math.floor(diff / 3600000);
-            const days = Math.floor(diff / 86400000);
-
-            if (minutes < 1) return '刚刚';
-            if (minutes < 60) return `${minutes}分钟前`;
-            if (hours < 24) return `${hours}小时前`;
-            if (days < 7) return `${days}天前`;
-            return new Date(timestamp).toLocaleDateString('zh-CN');
         }
 
         function hideSuggestions() {
@@ -1763,7 +2042,6 @@
         function performSearch(query = null) {
             const q = query || document.getElementById('searchInput').value.trim();
             if (q) {
-                saveToHistory(q);
                 hideSuggestions();
                 const url = q.match(/^https?:\/\//) || q.match(/^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}/)
                     ? (q.match(/^https?:\/\//) ? q : `https://${q}`)
@@ -1784,6 +2062,8 @@
 
         function switchEngine(engine) {
             currentEngine = engine;
+            // Save to localStorage
+            localStorage.setItem('searchEngine', engine);
             document.querySelectorAll('.engine-option').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.engine === engine);
             });
@@ -1795,7 +2075,6 @@
             const searchBtn = document.getElementById('searchBtn');
             const clearBtn = document.getElementById('clearSearch');
             const suggestionsEl = document.getElementById('searchSuggestions');
-            const clearHistoryBtn = document.getElementById('clearHistory');
 
             // Search input events
             if (searchInput) {
@@ -1818,15 +2097,16 @@
                     updateClearButton();
                     const value = searchInput.value.trim();
                     if (value) {
-                        renderSuggestions(value);
+                        fetchSuggestions(value);
                     } else {
                         hideSuggestions();
                     }
                 });
 
                 searchInput.addEventListener('focus', () => {
-                    if (searchInput.value.trim() === '' && searchHistory.length > 0) {
-                        renderSuggestions();
+                    const value = searchInput.value.trim();
+                    if (value) {
+                        fetchSuggestions(value);
                     }
                 });
 
@@ -1858,15 +2138,6 @@
                         updateClearButton();
                         searchInput.focus();
                     }
-                });
-            }
-
-            // Clear history button
-            if (clearHistoryBtn) {
-                clearHistoryBtn.addEventListener('click', () => {
-                    searchHistory = [];
-                    localStorage.removeItem('searchHistory');
-                    renderSuggestions();
                 });
             }
 
@@ -1923,6 +2194,25 @@
             items.forEach((item, index) => {
                 item.classList.toggle('selected', index === selectedSuggestionIndex);
             });
+
+            // Scroll selected item into view
+            if (selectedSuggestionIndex >= 0 && items[selectedSuggestionIndex]) {
+                const selectedItem = items[selectedSuggestionIndex];
+                const listContainer = document.getElementById('suggestionList');
+                if (listContainer) {
+                    const listRect = listContainer.getBoundingClientRect();
+                    const itemRect = selectedItem.getBoundingClientRect();
+
+                    // If item is above visible area
+                    if (itemRect.top < listRect.top) {
+                        listContainer.scrollTop -= (listRect.top - itemRect.top);
+                    }
+                    // If item is below visible area
+                    else if (itemRect.bottom > listRect.bottom) {
+                        listContainer.scrollTop += (itemRect.bottom - listRect.bottom);
+                    }
+                }
+            }
         }
 
         init();
